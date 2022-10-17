@@ -1,9 +1,14 @@
-package org.example;
+package org.example.manager;
+
+import org.example.Drawing;
+import org.example.user.Join;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class Whiteboard extends Frame implements MouseListener, MouseMotionListener, WindowListener,ActionListener{
     private static Drawing drawing;
@@ -13,18 +18,23 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
     Point SecondPoint = new Point(0,0);
     //A label display the current drawing mode
     Label currentMode;
+    Color color = Color.BLACK;
 
-    public static void main(String[] args) {
-        new Whiteboard();
-    }
+    ArrayList<String> drawRecord = new ArrayList<>();
+
+//    public static void main(String[] args) {
+//        new Whiteboard();
+//    }
 
 
-    public Whiteboard() {
+    public Whiteboard(String userName) {
         //this.drawing = drawing;
         //set up the canvas
         setBackground(Color.WHITE);
         setSize(400, 400);
         setVisible(true);
+        setTitle(userName + "'s Whiteboard");
+
 
         //add listeners
         addMouseListener(this);
@@ -43,6 +53,7 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
         Button freeHandButton = new Button("Free Hand");
         Button textButton = new Button("Text");
         Button clearButton = new Button("Clear");
+        Button colorButton = new Button("Color");
 
         lineButton.setActionCommand("Line");
         rectangleButton.setActionCommand("Rectangle");
@@ -51,6 +62,7 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
         freeHandButton.setActionCommand("Free Hand");
         textButton.setActionCommand("Text");
         clearButton.setActionCommand("Click to Clear");
+        colorButton.setActionCommand("Color");
 
         lineButton.addActionListener(this);
         rectangleButton.addActionListener(this);
@@ -59,6 +71,7 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
         freeHandButton.addActionListener(this);
         textButton.addActionListener(this);
         clearButton.addActionListener(this);
+        colorButton.addActionListener(this);
 
         //Prepare Labels
         Label ModeLabel = new Label("Current Mode");
@@ -68,6 +81,14 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
         currentMode.setFont(f1);
         currentMode.setForeground(new Color(20,200,240));
 
+
+        // File options
+        JComboBox menu = new JComboBox();
+        menu.setModel(new DefaultComboBoxModel(new String[] {"New", "Save", "Open"}));
+        menu.addActionListener(event -> {
+
+        });
+
         //3.3 Pack the Panel & give to Frame
         CommandPanel.add(lineButton);
         CommandPanel.add(rectangleButton);
@@ -76,6 +97,9 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
         CommandPanel.add(freeHandButton);
         CommandPanel.add(textButton);
         CommandPanel.add(clearButton);
+        CommandPanel.add(colorButton);
+        CommandPanel.add(menu);
+
 
         CommandPanel.add(ModeLabel);
         CommandPanel.add(currentMode);
@@ -128,8 +152,24 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
         Graphics g = getGraphics();
         switch(DrawMode) {
             case "Text":
-                g.setColor(Color.black);
-                g.drawString("This is gona be awesome", FirstPoint.x, FirstPoint.y);
+                String text = JOptionPane.showInputDialog("Text input");
+                if(text != null){
+                    Font font = new Font("Courier", Font.PLAIN, 20);
+                    g.setFont(font);
+                    g.drawString(text, FirstPoint.x, FirstPoint.y);
+                    // test send Text
+                    String history = "Text " + text + "," + FirstPoint.x + "," + FirstPoint.y;
+//                    System.out.println(Join.connection.);
+//                    for (int i = 0; i < Build.users.size(); i++) {
+//                        Connection conUser = Build.users.get(i);
+//                        System.out.println(conUser.userName);
+//                        try {
+//                            conUser.dataOutputStream.writeUTF(history);
+//                        } catch (IOException ex) {
+//                            throw new RuntimeException(ex);
+//                        }
+//                    }
+                }
                 break;
             case "Click to Clear":
                 repaint();
@@ -154,21 +194,33 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
         switch(DrawMode)
         {
             case "Line":
-                g.setColor(Color.green);
+                g.setColor(color);
                 g.drawLine(FirstPoint.x, FirstPoint.y, SecondPoint.x, SecondPoint.y);
                 break;
             case "Rectangle":
-                g.setColor(Color.red);
-                g.drawRect(FirstPoint.x, FirstPoint.y, Math.abs(FirstPoint.x-SecondPoint.x), Math.abs(FirstPoint.y-SecondPoint.y));
+                g.setColor(color);
+                if (FirstPoint.x < SecondPoint.x && FirstPoint.y > SecondPoint.y){
+                    // lower left to upper right
+                    g.drawRect(FirstPoint.x, SecondPoint.y, Math.abs(FirstPoint.x-SecondPoint.x), Math.abs(FirstPoint.y-SecondPoint.y));
+                } else if (FirstPoint.x > SecondPoint.x && FirstPoint.y > SecondPoint.y){
+                    // lower right to upper left
+                    g.drawRect(SecondPoint.x, SecondPoint.y, Math.abs(FirstPoint.x-SecondPoint.x), Math.abs(FirstPoint.y-SecondPoint.y));
+                } else if (FirstPoint.x > SecondPoint.x && FirstPoint.y < SecondPoint.y){
+                    // upper right to lower left
+                    g.drawRect(SecondPoint.x, FirstPoint.y, Math.abs(FirstPoint.x-SecondPoint.x), Math.abs(FirstPoint.y-SecondPoint.y));
+                }else{
+                    // upper left to lower right
+                    g.drawRect(FirstPoint.x, FirstPoint.y, Math.abs(FirstPoint.x-SecondPoint.x), Math.abs(FirstPoint.y-SecondPoint.y));
+                }
                 break;
             case "Triangle":
-                g.setColor(Color.blue);
+                g.setColor(color);
                 g.drawLine(FirstPoint.x, FirstPoint.y, SecondPoint.x, SecondPoint.y);
                 g.drawLine( FirstPoint.x  , SecondPoint.y, SecondPoint.x, SecondPoint.y);
                 g.drawLine( FirstPoint.x , SecondPoint.y, FirstPoint.x, FirstPoint.y);
                 break;
             case "Circle":
-                g.setColor(Color.orange);
+                g.setColor(color);
                 g.drawRoundRect(FirstPoint.x, FirstPoint.y, Math.abs(FirstPoint.x-SecondPoint.x), Math.abs(FirstPoint.y-SecondPoint.y), 200, 200);
                 break;
 
@@ -249,5 +301,11 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
         currentMode.setText(DrawMode);
         FirstPoint.setLocation(0, 0);
         SecondPoint.setLocation(0, 0);
+        if(e.getActionCommand() == "Color"){
+            Color color = JColorChooser.showDialog(null, "Pick a color", null);
+            if (color != null){
+                this.color = color;
+            }
+        }
     }
 }
