@@ -1,7 +1,5 @@
 package org.example.user;
 
-import org.example.manager.Build;
-import org.example.manager.RunServer;
 import org.example.manager.SynPaint;
 
 import java.awt.*;
