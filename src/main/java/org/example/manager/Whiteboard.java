@@ -150,6 +150,7 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
 
         FirstPoint.setLocation(e.getX(), e.getY());
         Graphics g = getGraphics();
+        g.setColor(color);
         switch(DrawMode) {
             case "Text":
                 String text = JOptionPane.showInputDialog("Text input");
@@ -195,10 +196,12 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
         {
             case "Line":
                 g.setColor(color);
+                String LineHistory = "Line " + FirstPoint.x + "," + FirstPoint.y + "," + SecondPoint.x + "," + SecondPoint.y;
                 g.drawLine(FirstPoint.x, FirstPoint.y, SecondPoint.x, SecondPoint.y);
                 break;
             case "Rectangle":
                 g.setColor(color);
+                String RectangleHistory = "Rectangle " + FirstPoint.x + "," + FirstPoint.y + "," + SecondPoint.x + "," + SecondPoint.y+"," + Math.abs(FirstPoint.x-SecondPoint.x)+"," + Math.abs(FirstPoint.y-SecondPoint.y);
                 if (FirstPoint.x < SecondPoint.x && FirstPoint.y > SecondPoint.y){
                     // lower left to upper right
                     g.drawRect(FirstPoint.x, SecondPoint.y, Math.abs(FirstPoint.x-SecondPoint.x), Math.abs(FirstPoint.y-SecondPoint.y));
@@ -215,12 +218,14 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
                 break;
             case "Triangle":
                 g.setColor(color);
+                String TriangleHistory = "Triangle " + FirstPoint.x + "," + FirstPoint.y + "," + SecondPoint.x + "," + SecondPoint.y;
                 g.drawLine(FirstPoint.x, FirstPoint.y, SecondPoint.x, SecondPoint.y);
                 g.drawLine( FirstPoint.x  , SecondPoint.y, SecondPoint.x, SecondPoint.y);
                 g.drawLine( FirstPoint.x , SecondPoint.y, FirstPoint.x, FirstPoint.y);
                 break;
             case "Circle":
                 g.setColor(color);
+                String CircleHistory = "Triangle " + FirstPoint.x + "," + FirstPoint.y + "," + SecondPoint.x + "," + SecondPoint.y+ Math.abs(FirstPoint.x-SecondPoint.x)+"," + Math.abs(FirstPoint.y-SecondPoint.y);
                 g.drawRoundRect(FirstPoint.x, FirstPoint.y, Math.abs(FirstPoint.x-SecondPoint.x), Math.abs(FirstPoint.y-SecondPoint.y), 200, 200);
                 break;
 
@@ -241,6 +246,7 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
     @Override
     public void mouseDragged(MouseEvent e) {
         Graphics g = getGraphics();
+        g.setColor(color);
         if (DrawMode.compareTo("Free Hand") == 0)
         {
             if (SecondPoint.x != 0 && SecondPoint.y != 0)
