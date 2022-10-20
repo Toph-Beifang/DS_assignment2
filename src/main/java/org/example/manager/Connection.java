@@ -1,69 +1,62 @@
 package org.example.manager;
 
-import java.io.*;
+import org.example.user.Join;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.Socket;
-import java.util.ArrayList;
 
 public class Connection extends Thread {
     public Socket socket;
     public int port;
-//    public ArrayList<String> userName = new ArrayList<>();
-    public String userName;
-
     public boolean kick = false;
+    public DataInputStream dataInputStream;
+    public DataOutputStream dataOutputStream;
 
-    DataInputStream dataInputStream;
-    DataOutputStream dataOutputStream;
-
-//    public Connection(String userName, Socket socket) {
-//        this.userName.add(userName);
-//        this.socket = socket;
-//    }
-    public Connection(String userName, Socket socket) {
-        this.socket = socket;
-//        this.userName.add(userName);
-        this.userName = userName;
+    public Connection(Socket socket) {
         try {
-            dataInputStream = new DataInputStream(this.socket.getInputStream());
-            dataOutputStream = new DataOutputStream(this.socket.getOutputStream());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            this.socket = socket;
+            this.dataInputStream = new DataInputStream(this.socket.getInputStream());
+            this.dataOutputStream = new DataOutputStream(this.socket.getOutputStream());
+        } catch (IOException var3) {
+            throw new RuntimeException(var3);
         }
     }
 
     public void start() {
         try {
-//            InputStream inputStream = socket.getInputStream();
-//            OutputStream outputStream = socket.getOutputStream();
-//            DataInputStream dataInputStream = new DataInputStream(inputStream);
-//            DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
-            String inputMsg = dataInputStream.readUTF();
-            while (!isInterrupted()){
-                String[] msg = inputMsg.split(" ");
-                if(msg[0].equals("join")){
-//                    socket.close();
-//                    System.out.println("msg: "+msg);
-                    System.out.println("msg " + msg[1]);
-                    String[] userInfo = msg[1].split(";");
-                    System.out.println("name: "+userInfo[1]);
-                    if(!userName.contains(userInfo[1])){
-                        System.out.println("Manager Connecting");
-//                        Build.users.add(new Connection(userInfo[1], ));
-                        dataOutputStream.writeUTF("Connect");
-                    } else{
-                        System.out.println("Manager Reject");
-                        dataOutputStream.writeUTF("Reject");
-                        dataOutputStream.flush();
-                        Build.users.remove(this);
-                        break;
+            System.out.println("MC start");
+            while(true) {
+                System.out.println("MC start2");
+                if (!this.isInterrupted()) {
+                    String inputMsg = this.dataInputStream.readUTF();
+                    String[] msg = inputMsg.split(" ");
+                    System.out.println("msg: " + inputMsg);
+                    if (msg[0].equals("join")) {
+                        System.out.println("name: " + msg[1]);
+                        if (!Build.usersName.contains(msg[1])) {
+                            Build.usersName.add(msg[1]);
+//                            System.out.println("Connection length (MC): " + RunServer.users.size());
+                            this.dataOutputStream.writeUTF("Connect");
+                            this.dataOutputStream.flush();
+                        } else {
+                            System.out.println("Manager Reject");
+                            this.dataOutputStream.writeUTF("Reject");
+                            this.dataOutputStream.flush();
+//                            Join.users.remove(this);
+                        }
+                    } else {
+//                        String[] userInfo = msg[1].split(";");
+                        System.out.println("manager msg:" + msg);
+                        SynPaint.syn(Build.createNew.g, msg);
                     }
+
 
                 }
             }
-
-        } catch (IOException e){
-            throw new RuntimeException(e);
+        } catch (IOException var4) {
+            throw new RuntimeException(var4);
         }
     }
-
 }

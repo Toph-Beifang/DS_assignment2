@@ -1,23 +1,31 @@
 package org.example.user;
 
 import org.example.manager.Build;
-import org.example.manager.Whiteboard;
 
 import java.awt.*;
 import java.io.*;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class Join {
     static String address;
     static int port;
-    static String userName;
-
+    public static String userName;
     public static Connection connection;
-    public static Socket socket;
+    private static Socket socket;
 
-    public static void main(String[] args){
-        if (args.length == 3){ // add variable valid or not
+    public static List<Connection> users = new ArrayList();
+//    public static List<String> usersName = new ArrayList();
+
+    public Join() {
+    }
+
+    public static void main(String[] args) {
+        if (args.length == 3) {
             address = args[0];
             port = Integer.parseInt(args[1]);
             userName = args[2];
@@ -27,43 +35,29 @@ public class Join {
             userName = "user";
         }
 
-        try{
+        try {
             socket = new Socket(address, port);
             connection = new Connection(socket);
-        } catch (UnknownHostException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            users.add(connection);
+        } catch (UnknownHostException var2) {
+            throw new RuntimeException(var2);
+        } catch (IOException var3) {
+            throw new RuntimeException(var3);
         }
 
-        EventQueue.invokeLater(()->{
-//            new Whiteboard(userName);
-            start();
-        });
-
-
+        run();
+        connection.start();
     }
 
-    private static void start(){
+    private static void run() {
         try {
-//            InputStream inputStream = socket.getInputStream();
-//            OutputStream outputStream = socket.getOutputStream();
-//            DataInputStream dataInputStream = new DataInputStream(inputStream);
-//            DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
-            connection.dataOutputStream.writeUTF("join " + socket + ";" + userName);
-            String join = connection.dataInputStream.readUTF();
-            System.out.println(join);
-            if(join.equals("Connect")){
-                System.out.println("User Connecting");
-                new org.example.user.Whiteboard(socket, userName);
-            }else{
-                System.out.println("Username already exist");
-                connection.dataOutputStream.writeUTF("End");
-                socket.close();
-                System.exit(1);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("connection name: " + connection);
+            connection.dataOutputStream.writeUTF("join " + userName);
+            System.out.println("joined");
+
+
+        } catch (IOException var1) {
+            throw new RuntimeException(var1);
         }
     }
 }
