@@ -184,8 +184,9 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
                 break;
             case "Circle":
                 g.setColor(color);
-                g.drawRoundRect(FirstPoint.x, FirstPoint.y, Math.abs(FirstPoint.x - SecondPoint.x), Math.abs(FirstPoint.y - SecondPoint.y), 200, 200);
-                history = "Circle " + FirstPoint.x + "," + FirstPoint.y + "," + Math.abs(FirstPoint.x - SecondPoint.x) + "," + Math.abs(FirstPoint.y - SecondPoint.y);
+                double radius = Math.sqrt(Math.pow(Math.abs(FirstPoint.x - SecondPoint.x), 2) + Math.pow(Math.abs(FirstPoint.y - SecondPoint.y), 2));
+                g.drawOval(Math.min(FirstPoint.x, SecondPoint.x), Math.min(FirstPoint.y, SecondPoint.y), (int) radius * 2, (int) radius * 2);
+                history = "Circle " + Math.min(FirstPoint.x, SecondPoint.x) + "," + Math.min(FirstPoint.y, SecondPoint.y) + "," + (int) radius * 2;
                 SynPaint.update(history + "," + color.getRGB());
                 break;
         }
@@ -220,10 +221,13 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
     }
 
     public void windowClosing(WindowEvent e) {
+        SynPaint.update("CloseAll");
+        this.dispose();
+        System.exit(1);
     }
 
     public void windowClosed(WindowEvent e) {
-        this.dispose();
+
     }
 
     public void windowIconified(WindowEvent e) {

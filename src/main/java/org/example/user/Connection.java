@@ -38,26 +38,44 @@ public class Connection {
                 System.out.println("reading msg: " + inputMsg + ";length: " + historyArray.length);
                 if(historyArray.length <= 1) {
                     if (inputMsg.equals("Connect")) {
+                        System.out.println("Connect");
                         EventQueue.invokeLater(() -> {
                             this.whiteboard = new Whiteboard(this, Join.userName);
                         });
-//                        System.out.println("Join built");
-//                        this.dataOutputStream.writeUTF("Text 123,226,186");
-//                        System.out.println("Text end");
                     } else if (inputMsg.equals("Reject")) {
                         System.out.println("Username already exist");
 //                        this.dataOutputStream.writeUTF("End");
                         this.socket.close();
                         System.exit(1);
+                    }else if (inputMsg.equals("No")) {
+                        System.out.println("Owner reject your join request");
+                        this.socket.close();
+                        System.exit(1);
+                    }else if(inputMsg.equals("CloseAll")){
+                        Join.usersName.clear();
+                        System.out.println("username: " + Join.usersName);
+                        System.out.println("user: " + Join.users);
+                        for (Connection c:Join.users) {
+                            c.whiteboard.dispose();
+                        }
+                        Join.users.clear();
+                        System.out.println("user2: " + Join.users);
+                        dataOutputStream.writeUTF("clear");
+                        this.socket.close();
+                        System.exit(1);
+                    } else{
+                        break;
                     }
                 } else{
                     if(historyArray[0].equals("UserList")){
+                        System.out.println("UserList");
                         String replace = historyArray[1].replaceAll("^\\[|]$", "");
                         List<String> userList = new ArrayList<String>(Arrays.asList(replace.split(",")));
                         for (String user: userList) {
                             whiteboard.userList.add(user);
                         }
                     } else if(historyArray[0].equals("Kick")){
+                        System.out.println("Kick");
                         int index = Join.usersName.indexOf(historyArray[1]);
                         System.out.println("kick " + Join.users);
                         Join.usersName.remove(index);
@@ -68,10 +86,12 @@ public class Connection {
                         this.socket.close();
                         System.exit(1);
                     }else if(historyArray[0].equals("Chat")){
+                        System.out.println("Chat");
                         String[] chat = historyArray[1].split(",");
                         whiteboard.chat.add(chat[1] + ": " + chat[0]);
                     }
                     else{
+                        System.out.println("Paint");
                         SynPaint.syn(whiteboard.getG(), historyArray);
                     }
                 }

@@ -43,14 +43,17 @@ public class SynPaint extends Panel {
         } else if (historyArray[0].equals("Circle")) {
             String record = historyArray[1];
             String[] recordArray = record.split(",");
-            g.setColor(new Color(Integer.parseInt(recordArray[4])));
+            g.setColor(new Color(Integer.parseInt(recordArray[3])));
             System.out.println("Circle...");
-            g.drawRoundRect(Integer.parseInt(recordArray[0]), Integer.parseInt(recordArray[1]), Integer.parseInt(recordArray[2]), Integer.parseInt(recordArray[3]), 200, 200);
+//            g.drawRoundRect(Integer.parseInt(recordArray[0]), Integer.parseInt(recordArray[1]), Integer.parseInt(recordArray[2]), Integer.parseInt(recordArray[3]), 200, 200);
+            g.drawOval(Integer.parseInt(recordArray[0]), Integer.parseInt(recordArray[1]), Integer.parseInt(recordArray[2]), Integer.parseInt(recordArray[2]));
         }
     }
 
     public static void update (String history) {
         try {
+            System.out.println("size: " +Build.usersName);
+            System.out.println("size users: " +Build.users);
             if(Build.users.size() > 0){
                 Build.users.get(0).dataOutputStream.writeUTF(history);
             }

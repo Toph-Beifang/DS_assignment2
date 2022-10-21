@@ -2,6 +2,7 @@ package org.example.manager;
 
 import org.example.user.Join;
 
+import javax.swing.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -39,10 +40,19 @@ public class Connection extends Thread {
                     if (msg[0].equals("join")) {
                         System.out.println("name: " + msg[1]);
                         if (!Build.usersName.contains(msg[1])) {
-                            Build.usersName.add(msg[1]);
+                            int joinConfirm = JOptionPane.showConfirmDialog(null, msg[1] + " is trying to join your whiteboard");
+                            System.out.println(joinConfirm);
+                            if(joinConfirm == 0){
+                                Build.usersName.add(msg[1]);
 //                            System.out.println("Connection length (MC): " + RunServer.users.size());
-                            this.dataOutputStream.writeUTF("Connect");
-                            this.dataOutputStream.flush();
+                                this.dataOutputStream.writeUTF("Connect");
+                                this.dataOutputStream.flush();
+                            } else{
+                                this.dataOutputStream.writeUTF("No");
+                                this.dataOutputStream.flush();
+                                socket.close();
+                                break;
+                            }
                         } else {
                             System.out.println("Manager Reject");
                             this.dataOutputStream.writeUTF("Reject");
@@ -72,8 +82,10 @@ public class Connection extends Thread {
                             this.dataOutputStream.writeUTF("UserList " + replace);
                             this.dataOutputStream.flush();
                         } else{
-                            socket.close();
-                            break;
+                            this.dataOutputStream.writeUTF("End");
+                            this.dataOutputStream.flush();
+//                            socket.close();
+//                            break;
                         }
                     } else if(msg[0].equals("Chat")){
                         String[] chat = msg[1].split(",");
@@ -81,7 +93,12 @@ public class Connection extends Thread {
                     }else if (msg[0].equals("Text") || msg[0].equals("Line") ||msg[0].equals("Rec") ||msg[0].equals("Tri")||msg[0].equals("Circle")) {
 //                        String[] userInfo = msg[1].split(";");
                         System.out.println("manager msg:" + msg);
-                        SynPaint.syn(Build.createNew.g, msg);
+                        if (Build.createNew.userList.getItemCount() > 1) {
+                            SynPaint.syn(Build.createNew.g, msg);
+                        }
+                    } else{
+                        System.out.println("Manager connection break");
+                        break;
                     }
                 }
             }

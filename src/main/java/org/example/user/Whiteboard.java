@@ -28,7 +28,7 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
     Color color;
     ArrayList<String> drawRecord;
     Connection connection;
-
+    String userName;
     String history = "";
     int colorRecord;
 
@@ -42,7 +42,7 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
         drawRecord = new ArrayList();
 
         this.connection = connection;
-
+        this.userName = userName;
 
         setBackground(Color.WHITE);
         setSize(400, 400);
@@ -51,7 +51,7 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
         addMouseListener(this);
         addMouseMotionListener(this);
         addWindowListener(this);
-        Panel CommandPanel = new Panel(new GridLayout(0, 3));
+        Panel CommandPanel = new Panel(new GridLayout(0, 5));
         CommandPanel.setBackground(new Color(200, 200, 200));
         Button lineButton = new Button("Line");
         Button rectangleButton = new Button("Rectangle");
@@ -91,10 +91,6 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
         ModeLabel.setFont(f1);
         currentMode.setFont(f1);
         currentMode.setForeground(new Color(20, 200, 240));
-        JComboBox menu = new JComboBox();
-        menu.setModel(new DefaultComboBoxModel(new String[]{"New", "Save", "Open"}));
-        menu.addActionListener((event) -> {
-        });
         userList.setBounds(0, 200, 75, 75);
 
         CommandPanel.add(lineButton);
@@ -105,7 +101,6 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
         CommandPanel.add(textButton);
         CommandPanel.add(clearButton);
         CommandPanel.add(colorButton);
-        CommandPanel.add(menu);
         CommandPanel.add(ModeLabel);
         CommandPanel.add(currentMode);
         CommandPanel.add(userList);
@@ -182,8 +177,9 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
                 break;
             case "Circle":
                 g.setColor(color);
-                g.drawRoundRect(FirstPoint.x, FirstPoint.y, Math.abs(FirstPoint.x - SecondPoint.x), Math.abs(FirstPoint.y - SecondPoint.y), 200, 200);
-                history = "Circle " + FirstPoint.x + "," + FirstPoint.y + "," + Math.abs(FirstPoint.x - SecondPoint.x) + "," + Math.abs(FirstPoint.y - SecondPoint.y);
+                double radius = Math.sqrt(Math.pow(Math.abs(FirstPoint.x - SecondPoint.x), 2) + Math.pow(Math.abs(FirstPoint.y - SecondPoint.y), 2));
+                g.drawOval(Math.min(FirstPoint.x, SecondPoint.x), Math.min(FirstPoint.y, SecondPoint.y), (int) radius * 2, (int) radius * 2);
+                history = "Circle " + Math.min(FirstPoint.x, SecondPoint.x) + "," + Math.min(FirstPoint.y, SecondPoint.y) + "," + (int) radius * 2;
                 SynPaint.sendPaint(history + "," + color.getRGB());
                 break;
         }
@@ -218,10 +214,13 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
     }
 
     public void windowClosing(WindowEvent e) {
+        SynPaint.sendPaint("Kicked " + userName);
+        this.dispose();
+        System.exit(1);
     }
 
     public void windowClosed(WindowEvent e) {
-        this.dispose();
+
     }
 
     public void windowIconified(WindowEvent e) {
