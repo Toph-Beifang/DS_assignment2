@@ -1,15 +1,6 @@
 package org.example.manager;
 
-import java.awt.Button;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.Frame;
-import java.awt.Graphics;
-import java.awt.GridLayout;
-import java.awt.Label;
-import java.awt.Panel;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -24,6 +15,7 @@ import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import org.example.Drawing;
+import org.example.user.Join;
 
 public class Whiteboard extends Frame implements MouseListener, MouseMotionListener, WindowListener, ActionListener {
     private static Drawing drawing;
@@ -37,6 +29,8 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
 
     String history = "";
     int colorRecord;
+    public List userList;
+    public List chat;
 
     public Whiteboard(String userName) {
         color = Color.BLACK;
@@ -49,7 +43,7 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
         addMouseListener(this);
         addMouseMotionListener(this);
         addWindowListener(this);
-        Panel CommandPanel = new Panel(new GridLayout(0, 3));
+        Panel CommandPanel = new Panel(new GridLayout(0, 5));
         CommandPanel.setBackground(new Color(200, 200, 200));
         Button lineButton = new Button("Line");
         Button rectangleButton = new Button("Rectangle");
@@ -59,6 +53,8 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
         Button textButton = new Button("Text");
         Button clearButton = new Button("Clear");
         Button colorButton = new Button("Color");
+        Button kickButton = new Button("Kick");
+        Button chatButton = new Button("Chat");
         lineButton.setActionCommand("Line");
         rectangleButton.setActionCommand("Rectangle");
         triangleButton.setActionCommand("Triangle");
@@ -67,6 +63,7 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
         textButton.setActionCommand("Text");
         clearButton.setActionCommand("Click to Clear");
         colorButton.setActionCommand("Color");
+        chatButton.setActionCommand("Chat");
         lineButton.addActionListener(this);
         rectangleButton.addActionListener(this);
         triangleButton.addActionListener(this);
@@ -75,6 +72,21 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
         textButton.addActionListener(this);
         clearButton.addActionListener(this);
         colorButton.addActionListener(this);
+        chatButton.addActionListener(e -> {
+            String chatText = JOptionPane.showInputDialog("Text input");
+            System.out.println("chat " + chat);
+            chat.add(userName + ": " + chatText);
+            SynPaint.update("Chat " + chatText + "," + userName);
+        });
+        kickButton.addActionListener(e -> {
+            String user = userList.getSelectedItem();
+            if(user.equals(userName)){
+                JOptionPane.showMessageDialog(null, "You can't kick yourself.");
+            }else{
+                SynPaint.update("Kick " + user);
+
+            }
+        });
         Label ModeLabel = new Label("Current Mode");
         currentMode = new Label();
         Font f1 = new Font("Arial", 1, 15);
@@ -85,6 +97,10 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
         menu.setModel(new DefaultComboBoxModel(new String[]{"New", "Save", "Open"}));
         menu.addActionListener((event) -> {
         });
+        userList = new List(5);
+        userList.add(userName);
+        chat = new List(5);
+
         CommandPanel.add(lineButton);
         CommandPanel.add(rectangleButton);
         CommandPanel.add(triangleButton);
@@ -93,9 +109,13 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
         CommandPanel.add(textButton);
         CommandPanel.add(clearButton);
         CommandPanel.add(colorButton);
-        CommandPanel.add(menu);
         CommandPanel.add(ModeLabel);
         CommandPanel.add(currentMode);
+        CommandPanel.add(menu);
+        CommandPanel.add(userList);
+        CommandPanel.add(kickButton);
+        CommandPanel.add(chat);
+        CommandPanel.add(chatButton);
         this.add("North", CommandPanel);
         g = getGraphics();
     }

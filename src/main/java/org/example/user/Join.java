@@ -19,7 +19,7 @@ public class Join {
     private static Socket socket;
 
     public static List<Connection> users = new ArrayList();
-//    public static List<String> usersName = new ArrayList();
+    public static List<String> usersName = new ArrayList();
 
     public Join() {
     }
@@ -39,6 +39,7 @@ public class Join {
             socket = new Socket(address, port);
             connection = new Connection(socket);
             users.add(connection);
+            usersName.add(userName);
         } catch (UnknownHostException var2) {
             throw new RuntimeException(var2);
         } catch (IOException var3) {

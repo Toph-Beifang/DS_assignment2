@@ -1,15 +1,6 @@
 package org.example.user;
 
-import java.awt.Button;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.Frame;
-import java.awt.Graphics;
-import java.awt.GridLayout;
-import java.awt.Label;
-import java.awt.Panel;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -29,28 +20,29 @@ import org.example.manager.SynPaint;
 
 public class Whiteboard extends Frame implements MouseListener, MouseMotionListener, WindowListener, ActionListener {
     private static Drawing drawing;
-    Graphics g;
+    public Graphics g;
     String DrawMode = "";
     Point FirstPoint = new Point(0, 0);
     Point SecondPoint = new Point(0, 0);
     Label currentMode;
     Color color;
     ArrayList<String> drawRecord;
+    Connection connection;
 
     String history = "";
     int colorRecord;
 
-    public Whiteboard(String userName) {
+    public List chat = new List(5);
+
+    public List userList = new List(5);
+
+    public Whiteboard(Connection connection, String userName) {
         color = Color.BLACK;
         colorRecord = color.getRGB();
         drawRecord = new ArrayList();
-//        this.connection = connection;
-        try {
-            Join.connection.dataOutputStream.writeUTF("begin ");
-            Join.connection.dataOutputStream.flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+
+        this.connection = connection;
+
 
         setBackground(Color.WHITE);
         setSize(400, 400);
@@ -69,6 +61,7 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
         Button textButton = new Button("Text");
         Button clearButton = new Button("Clear");
         Button colorButton = new Button("Color");
+        Button chatButton = new Button("Chat");
         lineButton.setActionCommand("Line");
         rectangleButton.setActionCommand("Rectangle");
         triangleButton.setActionCommand("Triangle");
@@ -77,6 +70,7 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
         textButton.setActionCommand("Text");
         clearButton.setActionCommand("Click to Clear");
         colorButton.setActionCommand("Color");
+        chatButton.setActionCommand("Chat");
         lineButton.addActionListener(this);
         rectangleButton.addActionListener(this);
         triangleButton.addActionListener(this);
@@ -85,6 +79,12 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
         textButton.addActionListener(this);
         clearButton.addActionListener(this);
         colorButton.addActionListener(this);
+        chatButton.addActionListener(e -> {
+            String chatText = JOptionPane.showInputDialog("Text input");
+            System.out.println("chat " + chat);
+            chat.add(userName + ": " + chatText);
+            SynPaint.sendPaint("Chat " + chatText + "," + userName);
+        });
         Label ModeLabel = new Label("Current Mode");
         currentMode = new Label();
         Font f1 = new Font("Arial", 1, 15);
@@ -95,6 +95,8 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
         menu.setModel(new DefaultComboBoxModel(new String[]{"New", "Save", "Open"}));
         menu.addActionListener((event) -> {
         });
+        userList.setBounds(0, 200, 75, 75);
+
         CommandPanel.add(lineButton);
         CommandPanel.add(rectangleButton);
         CommandPanel.add(triangleButton);
@@ -106,8 +108,17 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
         CommandPanel.add(menu);
         CommandPanel.add(ModeLabel);
         CommandPanel.add(currentMode);
+        CommandPanel.add(userList);
+        CommandPanel.add(chat);
+        CommandPanel.add(chatButton);
         this.add("North", CommandPanel);
         g = getGraphics();
+        try {
+            Join.connection.dataOutputStream.writeUTF("User " + userName);
+            Join.connection.dataOutputStream.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void mouseClicked(MouseEvent e) {

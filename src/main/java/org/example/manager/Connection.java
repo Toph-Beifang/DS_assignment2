@@ -6,6 +6,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Connection extends Thread {
     public Socket socket;
@@ -28,8 +30,9 @@ public class Connection extends Thread {
         try {
             System.out.println("MC start");
             while(true) {
-                System.out.println("MC start2");
+                System.out.println("MC start2: " + dataInputStream);
                 if (!this.isInterrupted()) {
+//                if (dataInputStream != null) {
                     String inputMsg = this.dataInputStream.readUTF();
                     String[] msg = inputMsg.split(" ");
                     System.out.println("msg: " + inputMsg);
@@ -44,15 +47,42 @@ public class Connection extends Thread {
                             System.out.println("Manager Reject");
                             this.dataOutputStream.writeUTF("Reject");
                             this.dataOutputStream.flush();
+                            socket.close();
+                            break;
 //                            Join.users.remove(this);
                         }
-                    } else {
+                    } else if (msg[0].equals("User")) {
+                        Build.createNew.userList.add(msg[1]);
+                        List<String> userList = new ArrayList();
+                        for (int user = 0; user < Build.createNew.userList.getItemCount(); user++) {
+                            userList.add(Build.createNew.userList.getItem(user));
+                        }
+                        String replace = userList.toString().replace(" ", "");
+                        this.dataOutputStream.writeUTF("UserList " + replace);
+                    } else if (msg[0].equals("Kicked")) {
+                        Build.createNew.userList.remove(msg[1]);
+                        Build.usersName.remove(msg[1]);
+                        System.out.println("kicked: " + Build.createNew.userList.getItemCount());
+                        if (Build.createNew.userList.getItemCount() > 1) {
+                            List<String> userList = new ArrayList();
+                            for (int user = 0; user < Build.createNew.userList.getItemCount(); user++) {
+                                userList.add(Build.createNew.userList.getItem(user));
+                            }
+                            String replace = userList.toString().replace(" ", "");
+                            this.dataOutputStream.writeUTF("UserList " + replace);
+                            this.dataOutputStream.flush();
+                        } else{
+                            socket.close();
+                            break;
+                        }
+                    } else if(msg[0].equals("Chat")){
+                        String[] chat = msg[1].split(",");
+                        Build.createNew.chat.add(chat[1] + ": " + chat[0]);
+                    }else if (msg[0].equals("Text") || msg[0].equals("Line") ||msg[0].equals("Rec") ||msg[0].equals("Tri")||msg[0].equals("Circle")) {
 //                        String[] userInfo = msg[1].split(";");
                         System.out.println("manager msg:" + msg);
                         SynPaint.syn(Build.createNew.g, msg);
                     }
-
-
                 }
             }
         } catch (IOException var4) {

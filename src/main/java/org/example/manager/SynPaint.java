@@ -50,17 +50,6 @@ public class SynPaint extends Panel {
     }
 
     public static void update (String history) {
-//        System.out.println("Size: " +Build.users.size());
-//        for (int i = 0; i < Build.users.size(); ++i) {
-//            Connection conUser = Build.users.get(i);
-//            System.out.println(conUser);
-//            try {
-//                conUser.dataOutputStream.writeUTF(history);
-//            } catch (IOException var10) {
-//                throw new RuntimeException(var10);
-//            }
-//        }
-
         try {
             if(Build.users.size() > 0){
                 Build.users.get(0).dataOutputStream.writeUTF(history);
