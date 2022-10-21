@@ -8,8 +8,11 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import javax.imageio.ImageIO;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
@@ -20,6 +23,7 @@ import org.example.user.Join;
 public class Whiteboard extends Frame implements MouseListener, MouseMotionListener, WindowListener, ActionListener {
     private static Drawing drawing;
     public Graphics g;
+    public Graphics g2;
     String DrawMode = "";
     Point FirstPoint = new Point(0, 0);
     Point SecondPoint = new Point(0, 0);
@@ -37,7 +41,7 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
         colorRecord = color.getRGB();
         drawRecord = new ArrayList();
         setBackground(Color.WHITE);
-        setSize(400, 400);
+        setSize(800, 800);
         setVisible(true);
         setTitle(userName + "'s Whiteboard");
         addMouseListener(this);
@@ -93,10 +97,40 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
         ModeLabel.setFont(f1);
         currentMode.setFont(f1);
         currentMode.setForeground(new Color(20, 200, 240));
+
+        int width = 800;
+        int height = 800;
+
+        // Constructs a BufferedImage of one of the predefined image types.
+        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+
+        g =  bufferedImage.getGraphics();
+        printAll(g);
+
         JComboBox menu = new JComboBox();
         menu.setModel(new DefaultComboBoxModel(new String[]{"New", "Save", "Open"}));
         menu.addActionListener((event) -> {
+            if (menu.getSelectedItem().equals("Save")) {
+                System.out.println("Saving the image");
+
+                File file = new File("myimage2.png");
+                try {
+                    ImageIO.write(bufferedImage, "png", file);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                // Save as JPEG
+                file = new File("myimage.jpg");
+                try {
+                    ImageIO.write(bufferedImage, "jpg", file);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         });
+
+
         userList = new List(5);
         userList.add(userName);
         chat = new List(5);
@@ -117,7 +151,7 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
         CommandPanel.add(chat);
         CommandPanel.add(chatButton);
         this.add("North", CommandPanel);
-        g = getGraphics();
+
     }
 
     public void mouseClicked(MouseEvent e) {
