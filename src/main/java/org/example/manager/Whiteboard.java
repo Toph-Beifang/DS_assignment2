@@ -97,13 +97,56 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
 
         //save current canvas to a record file
         JComboBox menu = new JComboBox();
-        menu.setModel(new DefaultComboBoxModel(new String[]{"New", "Save", "Open"}));
+        menu.setModel(new DefaultComboBoxModel(new String[]{"New", "Save","Save as","Open","Close"}));
         menu.addActionListener((event) -> {
-            if (menu.getSelectedItem().equals("Save")) {
-                System.out.println("Saving the image");
-                System.out.println(recordString);
+
+            //create a new record file
+            if (menu.getSelectedItem().equals("New")) {
                 try {
-                    String filename = userName+" Record.txt";
+                    String filename = JOptionPane.showInputDialog("New canvas record file name: ")+".txt";
+                    File canvasRecord = new File(filename);
+                    if (canvasRecord.createNewFile()) {
+                        System.out.println("File created: " + canvasRecord.getName());
+                        JOptionPane.showMessageDialog(null, "Canvas saved successfully");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "File already exists.");
+                    }
+                } catch (IOException e) {
+                    System.out.println("An error occurred.");
+                    e.printStackTrace();
+                }
+            }
+
+            //choose a file to save to and overwrite it with current canvas's record
+            else if (menu.getSelectedItem().equals("Save")) {
+                //Choosing a file using filechooser
+                JFileChooser filechooser= new JFileChooser();
+                if (filechooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION){
+                    String abtolutePath = filechooser.getSelectedFile().getAbsolutePath();
+                    FileWriter myWriter = null;
+                    try {
+                        myWriter = new FileWriter(abtolutePath);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    try {
+                        myWriter.write(String.valueOf(recordString));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    try {
+                        myWriter.close();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    JOptionPane.showMessageDialog(null, "Canvas saved successfully");
+                }
+            }
+
+            //save record to a new file of a given name
+            else if (menu.getSelectedItem().equals("Save as")) {
+                try {
+                    String filename = JOptionPane.showInputDialog("Filename: ")+".txt";
                     File canvasRecord = new File(filename);
                     if (canvasRecord.createNewFile()) {
                         System.out.println("File created: " + canvasRecord.getName());
@@ -137,79 +180,22 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
                         String recordLine = "";
                         recordLine = bufferedReader.readLine();
                         //System.out.println(recordLine);
+                        recordString = recordLine;
                         bufferedReader.close();
 
                         String[] recordList= recordLine.split(";");
                         for (String record : recordList) {
-                            //System.out.println(record);
-                            String[] parameterList = record.split("/");
-
-                            //redrawing the lines from record
-                            if (parameterList[0].equals("Line")) {
-                                int FirstPointX = Integer.parseInt(parameterList[1]);
-                                int FirstPointY = Integer.parseInt(parameterList[2]);
-                                int SecondPointX = Integer.parseInt(parameterList[3]);
-                                int SecondPointY = Integer.parseInt(parameterList[4]);
-                                g.setColor(new Color(Integer.parseInt(parameterList[5])));
-                                g.drawLine(FirstPointX, FirstPointY, SecondPointX, SecondPointY);
-                            }
-                            //redrawing the texts from record
-                            else if (parameterList[0].equals("Text")) {
-                                String text = parameterList[1];
-                                int FirstPointX = Integer.parseInt(parameterList[2]);
-                                int FirstPointY = Integer.parseInt(parameterList[3]);
-                                g.setColor(new Color(Integer.parseInt(parameterList[4])));
-                                //g.setFont(font);
-                                g.drawString(text, FirstPointX, FirstPointY);
-                            }
-                            //redrawing the triangles from record
-                            else if (parameterList[0].equals("Tri")) {
-                                int FirstPointX = Integer.parseInt(parameterList[1]);
-                                int FirstPointY = Integer.parseInt(parameterList[2]);
-                                int SecondPointX = Integer.parseInt(parameterList[3]);
-                                int SecondPointY = Integer.parseInt(parameterList[4]);
-
-                                g.setColor(new Color(Integer.parseInt(parameterList[5])));
-                                g.drawLine(FirstPointX, FirstPointY, SecondPointX , SecondPointY);
-                                g.drawLine(FirstPointX, SecondPointY, SecondPointX , SecondPointY);
-                                g.drawLine(FirstPointX, SecondPointY, FirstPointX, FirstPointY);
-                            }
-                            //redrawing the circles from record
-                            else if (parameterList[0].equals("Circle")) {
-                                int X = Integer.parseInt(parameterList[1]);
-                                int Y = Integer.parseInt(parameterList[2]);
-                                int radius = Integer.parseInt(parameterList[3]);
-
-                                g.setColor(new Color(Integer.parseInt(parameterList[4])));
-                                g.drawOval(X, Y, radius, radius);
-                            }
-                            //redrawing the rectangles from record
-                            else if (parameterList[0].equals("Rec")) {
-                                int X = Integer.parseInt(parameterList[1]);
-                                int Y = Integer.parseInt(parameterList[2]);
-                                int Height = Integer.parseInt(parameterList[3]);
-                                int Width = Integer.parseInt(parameterList[4]);
-
-                                g.setColor(new Color(Integer.parseInt(parameterList[5])));
-                                g.drawRect(X,Y,Height,Width);
-                            }
-                            //redrawing the freehands from record
-                            else if (parameterList[0].equals("Freehand")) {
-                                int FirstPointX = Integer.parseInt(parameterList[1]);
-                                int FirstPointY = Integer.parseInt(parameterList[2]);
-                                int SecondPointX = Integer.parseInt(parameterList[3]);
-                                int SecondPointY = Integer.parseInt(parameterList[4]);
-                                g.setColor(new Color(Integer.parseInt(parameterList[5])));
-                                g.drawLine(FirstPointX, FirstPointY, SecondPointX, SecondPointY);
-                            }
-
+                            recoverCanvas(record);
                         }
-
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                 }
+            }
 
+            else if (menu.getSelectedItem().equals("Close")){
+                recordString = "";
+                repaint();
             }
         });
 
@@ -237,7 +223,69 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
 
         g =  getGraphics();
     }
+    //a helper function to recover the drawings from the record file
+    public void recoverCanvas(String record){
 
+        String[] parameterList = record.split("/");
+        //redrawing the lines from record
+        if (parameterList[0].equals("Line")) {
+            int FirstPointX = Integer.parseInt(parameterList[1]);
+            int FirstPointY = Integer.parseInt(parameterList[2]);
+            int SecondPointX = Integer.parseInt(parameterList[3]);
+            int SecondPointY = Integer.parseInt(parameterList[4]);
+            g.setColor(new Color(Integer.parseInt(parameterList[5])));
+            g.drawLine(FirstPointX, FirstPointY, SecondPointX, SecondPointY);
+        }
+        //redrawing the texts from record
+        else if (parameterList[0].equals("Text")) {
+            String text = parameterList[1];
+            int FirstPointX = Integer.parseInt(parameterList[2]);
+            int FirstPointY = Integer.parseInt(parameterList[3]);
+            g.setColor(new Color(Integer.parseInt(parameterList[4])));
+            //g.setFont(font);
+            g.drawString(text, FirstPointX, FirstPointY);
+        }
+        //redrawing the triangles from record
+        else if (parameterList[0].equals("Tri")) {
+            int FirstPointX = Integer.parseInt(parameterList[1]);
+            int FirstPointY = Integer.parseInt(parameterList[2]);
+            int SecondPointX = Integer.parseInt(parameterList[3]);
+            int SecondPointY = Integer.parseInt(parameterList[4]);
+
+            g.setColor(new Color(Integer.parseInt(parameterList[5])));
+            g.drawLine(FirstPointX, FirstPointY, SecondPointX , SecondPointY);
+            g.drawLine(FirstPointX, SecondPointY, SecondPointX , SecondPointY);
+            g.drawLine(FirstPointX, SecondPointY, FirstPointX, FirstPointY);
+        }
+        //redrawing the circles from record
+        else if (parameterList[0].equals("Circle")) {
+            int X = Integer.parseInt(parameterList[1]);
+            int Y = Integer.parseInt(parameterList[2]);
+            int radius = Integer.parseInt(parameterList[3]);
+
+            g.setColor(new Color(Integer.parseInt(parameterList[4])));
+            g.drawOval(X, Y, radius, radius);
+        }
+        //redrawing the rectangles from record
+        else if (parameterList[0].equals("Rec")) {
+            int X = Integer.parseInt(parameterList[1]);
+            int Y = Integer.parseInt(parameterList[2]);
+            int Height = Integer.parseInt(parameterList[3]);
+            int Width = Integer.parseInt(parameterList[4]);
+
+            g.setColor(new Color(Integer.parseInt(parameterList[5])));
+            g.drawRect(X,Y,Height,Width);
+        }
+        //redrawing the freehands from record
+        else if (parameterList[0].equals("Freehand")) {
+            int FirstPointX = Integer.parseInt(parameterList[1]);
+            int FirstPointY = Integer.parseInt(parameterList[2]);
+            int SecondPointX = Integer.parseInt(parameterList[3]);
+            int SecondPointY = Integer.parseInt(parameterList[4]);
+            g.setColor(new Color(Integer.parseInt(parameterList[5])));
+            g.drawLine(FirstPointX, FirstPointY, SecondPointX, SecondPointY);
+        }
+    }
     public void mouseClicked(MouseEvent e) {
         FirstPoint.setLocation(e.getX(), e.getY());
         g.setColor(color);
