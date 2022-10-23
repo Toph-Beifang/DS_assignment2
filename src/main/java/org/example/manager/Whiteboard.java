@@ -233,14 +233,14 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
                         BufferedReader bufferedReader = new BufferedReader(new FileReader(abtolutePath));
                         String recordLine = "";
                         recordLine = bufferedReader.readLine();
-                        //System.out.println(recordLine);
                         recordString = recordLine;
                         SynPaint.update(recordString);
                         bufferedReader.close();
 
                         String[] recordList= recordLine.split(";");
                         for (String record : recordList) {
-                            recoverCanvas(record);
+                            String[] recordL = record.split(" ");
+                            SynPaint.syn(g, recordL);
                         }
                     } catch (IOException e) {
                         throw new RuntimeException(e);
@@ -354,7 +354,6 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
                     g.drawString(text, FirstPoint.x, FirstPoint.y);
                     System.out.println("color: " + colorRecord);
                     history = "Text " + text + "," + FirstPoint.x + "," + FirstPoint.y;
-//                    recordString += "Text/" + text + "/" + FirstPoint.x + "/" + FirstPoint.y+"/"+colorRecord+";";
                     recordString += "Text " + text + "," + FirstPoint.x + "," + FirstPoint.y+","+color.getRGB()+";";
                     SynPaint.update(history + "," + color.getRGB());
                 }
@@ -387,19 +386,15 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
                 if (FirstPoint.x < SecondPoint.x && FirstPoint.y > SecondPoint.y) {
                     g.drawRect(FirstPoint.x, SecondPoint.y, Math.abs(FirstPoint.x - SecondPoint.x), Math.abs(FirstPoint.y - SecondPoint.y));
                     history = "Rec " + FirstPoint.x + "," + SecondPoint.y + "," + Math.abs(FirstPoint.x - SecondPoint.x) + "," + Math.abs(FirstPoint.y - SecondPoint.y);
-//                    recordString += "Rec/" + FirstPoint.x + "/" + SecondPoint.y + "/" + Math.abs(FirstPoint.x - SecondPoint.x) + "/" + Math.abs(FirstPoint.y - SecondPoint.y)+"/"+colorRecord+";";
                 } else if (FirstPoint.x > SecondPoint.x && FirstPoint.y > SecondPoint.y) {
                     g.drawRect(SecondPoint.x, SecondPoint.y, Math.abs(FirstPoint.x - SecondPoint.x), Math.abs(FirstPoint.y - SecondPoint.y));
                     history = "Rec " + SecondPoint.x + "," + SecondPoint.y + "," + Math.abs(FirstPoint.x - SecondPoint.x) + "," + Math.abs(FirstPoint.y - SecondPoint.y);
-//                    recordString += "Rec/" + SecondPoint.x + "/" + SecondPoint.y + "/" + Math.abs(FirstPoint.x - SecondPoint.x) + "/" + Math.abs(FirstPoint.y - SecondPoint.y)+"/"+colorRecord+";";
                 } else if (FirstPoint.x > SecondPoint.x && FirstPoint.y < SecondPoint.y) {
                     g.drawRect(SecondPoint.x, FirstPoint.y, Math.abs(FirstPoint.x - SecondPoint.x), Math.abs(FirstPoint.y - SecondPoint.y));
                     history = "Rec " + SecondPoint.x + "," + FirstPoint.y + "," + Math.abs(FirstPoint.x - SecondPoint.x) + "," + Math.abs(FirstPoint.y - SecondPoint.y);
-//                    recordString += "Rec/" + SecondPoint.x + "/" + FirstPoint.y + "/" + Math.abs(FirstPoint.x - SecondPoint.x) + "/" + Math.abs(FirstPoint.y - SecondPoint.y)+"/"+colorRecord+";";
                 } else {
                     g.drawRect(FirstPoint.x, FirstPoint.y, Math.abs(FirstPoint.x - SecondPoint.x), Math.abs(FirstPoint.y - SecondPoint.y));
                     history = "Rec " + FirstPoint.x + "," + FirstPoint.y + "," + Math.abs(FirstPoint.x - SecondPoint.x) + "," + Math.abs(FirstPoint.y - SecondPoint.y);
-//                    recordString +="Rec/" + FirstPoint.x + "/" + FirstPoint.y + "/" + Math.abs(FirstPoint.x - SecondPoint.x) + "/" + Math.abs(FirstPoint.y - SecondPoint.y)+"/"+colorRecord+";";
                 }
                 recordString += history + "," + color.getRGB() + ";";
                 SynPaint.update(history + "," + color.getRGB());
@@ -411,7 +406,6 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
                 g.drawLine(FirstPoint.x, SecondPoint.y, SecondPoint.x, SecondPoint.y);
                 g.drawLine(FirstPoint.x, SecondPoint.y, FirstPoint.x, FirstPoint.y);
                 history = "Tri " + FirstPoint.x + "," + FirstPoint.y + "," + SecondPoint.x + "," + SecondPoint.y;
-//                recordString += "Tri/"+ FirstPoint.x + "/" + FirstPoint.y+"/"+ SecondPoint.x + "/" + SecondPoint.y+"/"+colorRecord+";";
                 recordString += history + "," + color.getRGB() + ";";
                 SynPaint.update(history + "," + color.getRGB());
                 break;
@@ -420,7 +414,6 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
                 int radius = (int) Math.sqrt(Math.pow(Math.abs(FirstPoint.x - SecondPoint.x), 2) + Math.pow(Math.abs(FirstPoint.y - SecondPoint.y), 2));
                 g.drawOval(Math.min(FirstPoint.x, SecondPoint.x)-radius, Math.min(FirstPoint.y, SecondPoint.y)-radius, (int) radius * 2, (int) radius * 2);
                 history = "Circle " + Math.min(FirstPoint.x, SecondPoint.x) + "," + Math.min(FirstPoint.y, SecondPoint.y) + "," + (int) radius * 2;
-//                recordString += "Circle/"+ Math.min(FirstPoint.x, SecondPoint.x) + "/" + Math.min(FirstPoint.y, SecondPoint.y)+"/"+  (int) radius * 2 +"/"+colorRecord+";";
                 recordString += history + "," + color.getRGB() + ";";
                 SynPaint.update(history + "," + color.getRGB());
                 break;
@@ -444,8 +437,6 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
             SecondPoint.setLocation(e.getX(), e.getY());
             g.drawLine(FirstPoint.x, FirstPoint.y, SecondPoint.x, SecondPoint.y);
             history = "Line " + FirstPoint.x + "," + FirstPoint.y + "," + SecondPoint.x + "," + SecondPoint.y;
-//            recordString += "Freehand/" + FirstPoint.x + "/" + FirstPoint.y + "/" + SecondPoint.x + "/" + SecondPoint.y+"/"+colorRecord+";";
-//            drawRecord.add(history+","+color+";");
             recordString += history+ "," + color.getRGB()+";";
             SynPaint.update(history + "," + color.getRGB());
         }
