@@ -84,8 +84,8 @@ public class Connection extends Thread {
                         } else{
                             this.dataOutputStream.writeUTF("End");
                             this.dataOutputStream.flush();
-//                            socket.close();
-//                            break;
+                            socket.close();
+                            break;
                         }
                     } else if(msg[0].equals("Chat")){
                         String[] chat = msg[1].split(",");
@@ -98,6 +98,7 @@ public class Connection extends Thread {
                         }
                     } else{
                         System.out.println("Manager connection break");
+                        socket.close();
                         break;
                     }
                 }

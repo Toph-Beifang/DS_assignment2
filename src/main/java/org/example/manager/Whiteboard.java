@@ -75,8 +75,10 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
         chatButton.addActionListener(e -> {
             String chatText = JOptionPane.showInputDialog("Text input");
             System.out.println("chat " + chat);
-            chat.add(userName + ": " + chatText);
-            SynPaint.update("Chat " + chatText + "," + userName);
+            if(!chatText.isEmpty()){
+                chat.add(userName + ": " + chatText);
+                SynPaint.update("Chat " + chatText + "," + userName);
+            }
         });
         kickButton.addActionListener(e -> {
             String user = userList.getSelectedItem();

@@ -30,8 +30,8 @@ public class Connection {
 
     public void start() {
         try {
-//            while(this.socket.isConnected()) {
-            while(true) {
+            while(this.socket.isConnected()) {
+//            while(true) {
                 System.out.println("UC start");
                 String inputMsg = this.dataInputStream.readUTF();
                 String[] historyArray = inputMsg.split(" ");
@@ -45,6 +45,7 @@ public class Connection {
                     } else if (inputMsg.equals("Reject")) {
                         System.out.println("Username already exist");
 //                        this.dataOutputStream.writeUTF("End");
+                        Join.users.remove(this);
                         this.socket.close();
                         System.exit(1);
                     }else if (inputMsg.equals("No")) {
