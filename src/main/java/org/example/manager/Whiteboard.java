@@ -97,28 +97,78 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
 
         //save current canvas to a record file
         JComboBox menu = new JComboBox();
-        menu.setModel(new DefaultComboBoxModel(new String[]{"New", "Save","Save as","Open","Close"}));
+        menu.setModel(new DefaultComboBoxModel(new String[]{"New", "Save to","Save as","Open","Close"}));
         menu.addActionListener((event) -> {
 
             //create a new record file
             if (menu.getSelectedItem().equals("New")) {
-                try {
-                    String filename = JOptionPane.showInputDialog("New canvas record file name: ")+".txt";
-                    File canvasRecord = new File(filename);
-                    if (canvasRecord.createNewFile()) {
-                        System.out.println("File created: " + canvasRecord.getName());
-                        JOptionPane.showMessageDialog(null, "Canvas saved successfully");
-                    } else {
-                        JOptionPane.showMessageDialog(null, "File already exists.");
+                String[] options = {"Save & Create New Record", "Creat New Record without saving"};
+                //Integer[] options = {1, 3, 5, 7, 9, 11};
+                //Double[] options = {3.141, 1.618};
+                //Character[] options = {'a', 'b', 'c', 'd'};
+                int x = JOptionPane.showOptionDialog(null, "Returns the position of your choice on the array",
+                        "Click a button",
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+                //if the user choose to Save current canvas before Creating a  New Record
+                if (x == 0) {
+
+                    //first save the current canvas
+                    try {
+                        String filename = JOptionPane.showInputDialog("Filename: ")+".txt";
+                        File canvasRecord = new File(filename);
+                        if (canvasRecord.createNewFile()) {
+                            System.out.println("File created: " + canvasRecord.getName());
+                            try {
+                                FileWriter myWriter = new FileWriter(filename);
+                                myWriter.write(String.valueOf(recordString));
+                                myWriter.close();
+                                JOptionPane.showMessageDialog(null, "Canvas saved successfully");
+                            } catch (IOException e) {
+                                System.out.println("An error occurred.");
+                                e.printStackTrace();
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(null, "File already exists.");
+                        }
+                    } catch (IOException e) {
+                        System.out.println("An error occurred.");
+                        e.printStackTrace();
                     }
-                } catch (IOException e) {
-                    System.out.println("An error occurred.");
-                    e.printStackTrace();
+
+                    //then create a new canvas
+                    try {
+                        String filename = JOptionPane.showInputDialog("New canvas record file name: ")+".txt";
+                        File canvasRecord = new File(filename);
+                        if (canvasRecord.createNewFile()) {
+                            System.out.println("File created: " + canvasRecord.getName());
+                            JOptionPane.showMessageDialog(null, "Canvas saved successfully");
+                        } else {
+                            JOptionPane.showMessageDialog(null, "File already exists.");
+                        }
+                    } catch (IOException e) {
+                        System.out.println("An error occurred.");
+                        e.printStackTrace();
+                    }
+                }
+                //if the user choose to create a new record without saving current canvas
+                else if (x == 1){
+                    try {
+                        String filename = JOptionPane.showInputDialog("New canvas record file name: ")+".txt";
+                        File canvasRecord = new File(filename);
+                        if (canvasRecord.createNewFile()) {
+                            System.out.println("File created: " + canvasRecord.getName());
+                            JOptionPane.showMessageDialog(null, "Canvas saved successfully");
+                        } else {
+                            JOptionPane.showMessageDialog(null, "File already exists.");
+                        }
+                    } catch (IOException e) {
+                        System.out.println("An error occurred.");
+                        e.printStackTrace();
+                    }
                 }
             }
-
             //choose a file to save to and overwrite it with current canvas's record
-            else if (menu.getSelectedItem().equals("Save")) {
+            else if (menu.getSelectedItem().equals("Save to")) {
                 //Choosing a file using filechooser
                 JFileChooser filechooser= new JFileChooser();
                 if (filechooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION){
