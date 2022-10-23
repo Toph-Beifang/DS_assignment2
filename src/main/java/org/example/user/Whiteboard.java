@@ -45,7 +45,7 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
         this.userName = userName;
 
         setBackground(Color.WHITE);
-        setSize(400, 400);
+        setSize(800, 800);
         setVisible(true);
         setTitle(userName + "'s Whiteboard");
         addMouseListener(this);

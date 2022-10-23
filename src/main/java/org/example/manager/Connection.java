@@ -96,7 +96,10 @@ public class Connection extends Thread {
                         if (Build.createNew.userList.getItemCount() > 1) {
                             SynPaint.syn(Build.createNew.g, msg);
                         }
-                    } else{
+                    } else if (msg[0].equals("SynPaint")){
+                        this.dataOutputStream.writeUTF("PaintAll " + Build.createNew.recordString);
+                    }
+                    else{
                         System.out.println("Manager connection break");
                         socket.close();
                         break;

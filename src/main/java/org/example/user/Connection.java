@@ -75,6 +75,7 @@ public class Connection {
                         for (String user: userList) {
                             whiteboard.userList.add(user);
                         }
+                        this.dataOutputStream.writeUTF("SynPaint");
                     } else if(historyArray[0].equals("Kick")){
                         System.out.println("Kick");
                         int index = Join.usersName.indexOf(historyArray[1]);
@@ -91,7 +92,17 @@ public class Connection {
                         String[] chat = historyArray[1].split(",");
                         whiteboard.chat.add(chat[1] + ": " + chat[0]);
                     }
-                    else{
+                    else if(historyArray[0].equals("PaintAll")){
+                        String[] paint = inputMsg.split(" ",2);
+                        String[] paintL = paint[1].split(";");
+                        for (String line: paintL) {
+                            String[] paintLine = line.split(" ");
+                            System.out.println("Line: " + whiteboard.getG());
+                            SynPaint.syn(whiteboard.getG(), paintLine);
+                        }
+                    }
+                    else if (historyArray[0].equals("Text") || historyArray[0].equals("Line") ||historyArray[0].equals("Rec") ||historyArray[0].equals("Tri")||historyArray[0].equals("Circle"))
+                    {
                         System.out.println("Paint");
                         SynPaint.syn(whiteboard.getG(), historyArray);
                     }

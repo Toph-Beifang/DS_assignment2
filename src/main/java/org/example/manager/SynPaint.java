@@ -53,7 +53,8 @@ public class SynPaint extends Panel {
     public static void update (String history) {
         try {
             System.out.println("size: " +Build.usersName);
-            System.out.println("size users: " +Build.users);
+            System.out.println("update: " +history);
+
             if(Build.users.size() > 0){
                 Build.users.get(0).dataOutputStream.writeUTF(history);
             }

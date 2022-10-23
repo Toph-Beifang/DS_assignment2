@@ -96,72 +96,68 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
         ModeLabel.setFont(f1);
         currentMode.setFont(f1);
         currentMode.setForeground(new Color(20, 200, 240));
-
+        g =  getGraphics();
         //save current canvas to a record file
         JComboBox menu = new JComboBox();
         menu.setModel(new DefaultComboBoxModel(new String[]{"New", "Save to","Save as","Open","Close"}));
         menu.addActionListener((event) -> {
-
             //create a new record file
             if (menu.getSelectedItem().equals("New")) {
-                String[] options = {"Save & Create New Record", "Creat New Record without saving"};
-                //Integer[] options = {1, 3, 5, 7, 9, 11};
-                //Double[] options = {3.141, 1.618};
-                //Character[] options = {'a', 'b', 'c', 'd'};
-                int x = JOptionPane.showOptionDialog(null, "Returns the position of your choice on the array",
+                String[] options = {"Create New Record & Save current canvas", "Creat New Empty Record"};
+
+                int x = JOptionPane.showOptionDialog(null, "Create a New Record File",
                         "Click a button",
                         JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+
                 //if the user choose to Save current canvas before Creating a  New Record
                 if (x == 0) {
-
-                    //first save the current canvas
+                    //create a new record file and save the current canvas into it
                     try {
-                        String filename = JOptionPane.showInputDialog("Filename: ")+".txt";
-                        File canvasRecord = new File(filename);
-                        if (canvasRecord.createNewFile()) {
-                            System.out.println("File created: " + canvasRecord.getName());
-                            try {
-                                FileWriter myWriter = new FileWriter(filename);
-                                myWriter.write(String.valueOf(recordString));
-                                myWriter.close();
-                                JOptionPane.showMessageDialog(null, "Canvas saved successfully");
-                            } catch (IOException e) {
-                                System.out.println("An error occurred.");
-                                e.printStackTrace();
+                        String filenameEntered = JOptionPane.showInputDialog("Filename: ");
+                        if (filenameEntered==null) {
+                            JOptionPane.showMessageDialog(null, "File Name can not be empty");
+                        }
+                        else{
+                            String filename = filenameEntered + ".txt";
+                            File canvasRecord = new File(filename);
+                            if (canvasRecord.createNewFile()) {
+                                System.out.println("File created: " + canvasRecord.getName());
+                                try {
+                                    FileWriter myWriter = new FileWriter(filename);
+                                    myWriter.write(String.valueOf(recordString));
+                                    myWriter.close();
+                                    JOptionPane.showMessageDialog(null, "Canvas saved successfully");
+                                } catch (IOException e) {
+                                    System.out.println("An error occurred.");
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                JOptionPane.showMessageDialog(null, "File already exists.");
                             }
-                        } else {
-                            JOptionPane.showMessageDialog(null, "File already exists.");
                         }
                     } catch (IOException e) {
                         System.out.println("An error occurred.");
                         e.printStackTrace();
                     }
 
-                    //then create a new canvas
-                    try {
-                        String filename = JOptionPane.showInputDialog("New canvas record file name: ")+".txt";
-                        File canvasRecord = new File(filename);
-                        if (canvasRecord.createNewFile()) {
-                            System.out.println("File created: " + canvasRecord.getName());
-                            JOptionPane.showMessageDialog(null, "Canvas saved successfully");
-                        } else {
-                            JOptionPane.showMessageDialog(null, "File already exists.");
-                        }
-                    } catch (IOException e) {
-                        System.out.println("An error occurred.");
-                        e.printStackTrace();
-                    }
                 }
                 //if the user choose to create a new record without saving current canvas
                 else if (x == 1){
                     try {
-                        String filename = JOptionPane.showInputDialog("New canvas record file name: ")+".txt";
-                        File canvasRecord = new File(filename);
-                        if (canvasRecord.createNewFile()) {
-                            System.out.println("File created: " + canvasRecord.getName());
-                            JOptionPane.showMessageDialog(null, "Canvas saved successfully");
-                        } else {
-                            JOptionPane.showMessageDialog(null, "File already exists.");
+
+                        String filenameEntered = JOptionPane.showInputDialog("Filename: ");
+                        if (filenameEntered==null) {
+                            JOptionPane.showMessageDialog(null, "File Name can not be empty");
+                        }
+                        else {
+                            String filename = filenameEntered + ".txt";
+                            File canvasRecord = new File(filename);
+                            if (canvasRecord.createNewFile()) {
+                                System.out.println("File created: " + canvasRecord.getName());
+                                JOptionPane.showMessageDialog(null, "Canvas saved successfully");
+                            } else {
+                                JOptionPane.showMessageDialog(null, "File already exists.");
+                            }
                         }
                     } catch (IOException e) {
                         System.out.println("An error occurred.");
@@ -198,21 +194,27 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
             //save record to a new file of a given name
             else if (menu.getSelectedItem().equals("Save as")) {
                 try {
-                    String filename = JOptionPane.showInputDialog("Filename: ")+".txt";
-                    File canvasRecord = new File(filename);
-                    if (canvasRecord.createNewFile()) {
-                        System.out.println("File created: " + canvasRecord.getName());
-                        try {
-                            FileWriter myWriter = new FileWriter(filename);
-                            myWriter.write(String.valueOf(recordString));
-                            myWriter.close();
-                            JOptionPane.showMessageDialog(null, "Canvas saved successfully");
-                        } catch (IOException e) {
-                            System.out.println("An error occurred.");
-                            e.printStackTrace();
+                    String filenameEntered = JOptionPane.showInputDialog("Filename: ");
+                    if (filenameEntered==null) {
+                        JOptionPane.showMessageDialog(null, "File Name can not be empty");
+                    }
+                    else{
+                        String filename = filenameEntered + ".txt";
+                        File canvasRecord = new File(filename);
+                        if (canvasRecord.createNewFile()) {
+                            System.out.println("File created: " + canvasRecord.getName());
+                            try {
+                                FileWriter myWriter = new FileWriter(filename);
+                                myWriter.write(String.valueOf(recordString));
+                                myWriter.close();
+                                JOptionPane.showMessageDialog(null, "Canvas saved successfully");
+                            } catch (IOException e) {
+                                System.out.println("An error occurred.");
+                                e.printStackTrace();
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(null, "File already exists.");
                         }
-                    } else {
-                        JOptionPane.showMessageDialog(null, "File already exists.");
                     }
                 } catch (IOException e) {
                     System.out.println("An error occurred.");
@@ -233,6 +235,7 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
                         recordLine = bufferedReader.readLine();
                         //System.out.println(recordLine);
                         recordString = recordLine;
+                        SynPaint.update(recordString);
                         bufferedReader.close();
 
                         String[] recordList= recordLine.split(";");
@@ -273,7 +276,7 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
         CommandPanel.add(chatButton);
         this.add("North", CommandPanel);
 
-        g =  getGraphics();
+
     }
     //a helper function to recover the drawings from the record file
     public void recoverCanvas(String record){
@@ -351,7 +354,8 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
                     g.drawString(text, FirstPoint.x, FirstPoint.y);
                     System.out.println("color: " + colorRecord);
                     history = "Text " + text + "," + FirstPoint.x + "," + FirstPoint.y;
-                    recordString += "Text/" + text + "/" + FirstPoint.x + "/" + FirstPoint.y+"/"+colorRecord+";";
+//                    recordString += "Text/" + text + "/" + FirstPoint.x + "/" + FirstPoint.y+"/"+colorRecord+";";
+                    recordString += "Text " + text + "," + FirstPoint.x + "," + FirstPoint.y+","+color.getRGB()+";";
                     SynPaint.update(history + "," + color.getRGB());
                 }
                 break;
@@ -375,7 +379,7 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
                 g.setColor(color);
                 g.drawLine(FirstPoint.x, FirstPoint.y, SecondPoint.x, SecondPoint.y);
                 history = "Line " + FirstPoint.x + "," + FirstPoint.y + "," + SecondPoint.x + "," + SecondPoint.y;
-                recordString += "Line/"+ FirstPoint.x + "/" + FirstPoint.y+"/"+ SecondPoint.x + "/" + SecondPoint.y+"/"+colorRecord+";";
+                recordString += "Line "+ FirstPoint.x + "," + FirstPoint.y+","+ SecondPoint.x + "," + SecondPoint.y+","+color.getRGB()+";";
                 SynPaint.update(history + "," + color.getRGB());
                 break;
             case "Rectangle":
@@ -383,20 +387,21 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
                 if (FirstPoint.x < SecondPoint.x && FirstPoint.y > SecondPoint.y) {
                     g.drawRect(FirstPoint.x, SecondPoint.y, Math.abs(FirstPoint.x - SecondPoint.x), Math.abs(FirstPoint.y - SecondPoint.y));
                     history = "Rec " + FirstPoint.x + "," + SecondPoint.y + "," + Math.abs(FirstPoint.x - SecondPoint.x) + "," + Math.abs(FirstPoint.y - SecondPoint.y);
-                    recordString += "Rec/" + FirstPoint.x + "/" + SecondPoint.y + "/" + Math.abs(FirstPoint.x - SecondPoint.x) + "/" + Math.abs(FirstPoint.y - SecondPoint.y)+"/"+colorRecord+";";
+//                    recordString += "Rec/" + FirstPoint.x + "/" + SecondPoint.y + "/" + Math.abs(FirstPoint.x - SecondPoint.x) + "/" + Math.abs(FirstPoint.y - SecondPoint.y)+"/"+colorRecord+";";
                 } else if (FirstPoint.x > SecondPoint.x && FirstPoint.y > SecondPoint.y) {
                     g.drawRect(SecondPoint.x, SecondPoint.y, Math.abs(FirstPoint.x - SecondPoint.x), Math.abs(FirstPoint.y - SecondPoint.y));
                     history = "Rec " + SecondPoint.x + "," + SecondPoint.y + "," + Math.abs(FirstPoint.x - SecondPoint.x) + "," + Math.abs(FirstPoint.y - SecondPoint.y);
-                    recordString += "Rec/" + SecondPoint.x + "/" + SecondPoint.y + "/" + Math.abs(FirstPoint.x - SecondPoint.x) + "/" + Math.abs(FirstPoint.y - SecondPoint.y)+"/"+colorRecord+";";
+//                    recordString += "Rec/" + SecondPoint.x + "/" + SecondPoint.y + "/" + Math.abs(FirstPoint.x - SecondPoint.x) + "/" + Math.abs(FirstPoint.y - SecondPoint.y)+"/"+colorRecord+";";
                 } else if (FirstPoint.x > SecondPoint.x && FirstPoint.y < SecondPoint.y) {
                     g.drawRect(SecondPoint.x, FirstPoint.y, Math.abs(FirstPoint.x - SecondPoint.x), Math.abs(FirstPoint.y - SecondPoint.y));
                     history = "Rec " + SecondPoint.x + "," + FirstPoint.y + "," + Math.abs(FirstPoint.x - SecondPoint.x) + "," + Math.abs(FirstPoint.y - SecondPoint.y);
-                    recordString += "Rec/" + SecondPoint.x + "/" + FirstPoint.y + "/" + Math.abs(FirstPoint.x - SecondPoint.x) + "/" + Math.abs(FirstPoint.y - SecondPoint.y)+"/"+colorRecord+";";
+//                    recordString += "Rec/" + SecondPoint.x + "/" + FirstPoint.y + "/" + Math.abs(FirstPoint.x - SecondPoint.x) + "/" + Math.abs(FirstPoint.y - SecondPoint.y)+"/"+colorRecord+";";
                 } else {
                     g.drawRect(FirstPoint.x, FirstPoint.y, Math.abs(FirstPoint.x - SecondPoint.x), Math.abs(FirstPoint.y - SecondPoint.y));
                     history = "Rec " + FirstPoint.x + "," + FirstPoint.y + "," + Math.abs(FirstPoint.x - SecondPoint.x) + "," + Math.abs(FirstPoint.y - SecondPoint.y);
-                    recordString +="Rec/" + FirstPoint.x + "/" + FirstPoint.y + "/" + Math.abs(FirstPoint.x - SecondPoint.x) + "/" + Math.abs(FirstPoint.y - SecondPoint.y)+"/"+colorRecord+";";
+//                    recordString +="Rec/" + FirstPoint.x + "/" + FirstPoint.y + "/" + Math.abs(FirstPoint.x - SecondPoint.x) + "/" + Math.abs(FirstPoint.y - SecondPoint.y)+"/"+colorRecord+";";
                 }
+                recordString += history + "," + color.getRGB() + ";";
                 SynPaint.update(history + "," + color.getRGB());
                 break;
 
@@ -406,15 +411,17 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
                 g.drawLine(FirstPoint.x, SecondPoint.y, SecondPoint.x, SecondPoint.y);
                 g.drawLine(FirstPoint.x, SecondPoint.y, FirstPoint.x, FirstPoint.y);
                 history = "Tri " + FirstPoint.x + "," + FirstPoint.y + "," + SecondPoint.x + "," + SecondPoint.y;
-                recordString += "Tri/"+ FirstPoint.x + "/" + FirstPoint.y+"/"+ SecondPoint.x + "/" + SecondPoint.y+"/"+colorRecord+";";
+//                recordString += "Tri/"+ FirstPoint.x + "/" + FirstPoint.y+"/"+ SecondPoint.x + "/" + SecondPoint.y+"/"+colorRecord+";";
+                recordString += history + "," + color.getRGB() + ";";
                 SynPaint.update(history + "," + color.getRGB());
                 break;
             case "Circle":
                 g.setColor(color);
-                double radius = Math.sqrt(Math.pow(Math.abs(FirstPoint.x - SecondPoint.x), 2) + Math.pow(Math.abs(FirstPoint.y - SecondPoint.y), 2));
-                g.drawOval(Math.min(FirstPoint.x, SecondPoint.x), Math.min(FirstPoint.y, SecondPoint.y), (int) radius * 2, (int) radius * 2);
+                int radius = (int) Math.sqrt(Math.pow(Math.abs(FirstPoint.x - SecondPoint.x), 2) + Math.pow(Math.abs(FirstPoint.y - SecondPoint.y), 2));
+                g.drawOval(Math.min(FirstPoint.x, SecondPoint.x)-radius, Math.min(FirstPoint.y, SecondPoint.y)-radius, (int) radius * 2, (int) radius * 2);
                 history = "Circle " + Math.min(FirstPoint.x, SecondPoint.x) + "," + Math.min(FirstPoint.y, SecondPoint.y) + "," + (int) radius * 2;
-                recordString += "Circle/"+ Math.min(FirstPoint.x, SecondPoint.x) + "/" + Math.min(FirstPoint.y, SecondPoint.y)+"/"+  (int) radius * 2 +"/"+colorRecord+";";
+//                recordString += "Circle/"+ Math.min(FirstPoint.x, SecondPoint.x) + "/" + Math.min(FirstPoint.y, SecondPoint.y)+"/"+  (int) radius * 2 +"/"+colorRecord+";";
+                recordString += history + "," + color.getRGB() + ";";
                 SynPaint.update(history + "," + color.getRGB());
                 break;
         }
@@ -437,8 +444,9 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
             SecondPoint.setLocation(e.getX(), e.getY());
             g.drawLine(FirstPoint.x, FirstPoint.y, SecondPoint.x, SecondPoint.y);
             history = "Line " + FirstPoint.x + "," + FirstPoint.y + "," + SecondPoint.x + "," + SecondPoint.y;
-            recordString += "Freehand/" + FirstPoint.x + "/" + FirstPoint.y + "/" + SecondPoint.x + "/" + SecondPoint.y+"/"+colorRecord+";";
-            drawRecord.add(history+","+color+";");
+//            recordString += "Freehand/" + FirstPoint.x + "/" + FirstPoint.y + "/" + SecondPoint.x + "/" + SecondPoint.y+"/"+colorRecord+";";
+//            drawRecord.add(history+","+color+";");
+            recordString += history+ "," + color.getRGB()+";";
             SynPaint.update(history + "," + color.getRGB());
         }
 
@@ -451,7 +459,8 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
     }
 
     public void windowClosing(WindowEvent e) {
-        SynPaint.update("CloseAll");
+        if(userList.getItemCount() > 1){
+        SynPaint.update("CloseAll");}
         this.dispose();
         System.exit(1);
     }
