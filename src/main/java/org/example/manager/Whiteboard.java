@@ -8,17 +8,11 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
-import javax.imageio.ImageIO;
 import javax.swing.*;
 
-import org.example.Drawing;
-import org.example.user.Join;
-
 public class Whiteboard extends Frame implements MouseListener, MouseMotionListener, WindowListener, ActionListener {
-    private static Drawing drawing;
     public Graphics g;
     public Graphics g2;
     String DrawMode = "";
@@ -249,8 +243,13 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
             }
 
             else if (menu.getSelectedItem().equals("Close")){
-                recordString = "";
-                repaint();
+                // Close window
+                System.out.println("amont:" + userList.getItemCount());
+                if(userList.getItemCount() > 1){
+                    SynPaint.update("CloseAll");
+                }
+                this.dispose();
+                System.exit(1);
             }
         });
 
@@ -278,77 +277,17 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
 
 
     }
-    //a helper function to recover the drawings from the record file
-    public void recoverCanvas(String record){
 
-        String[] parameterList = record.split("/");
-        //redrawing the lines from record
-        if (parameterList[0].equals("Line")) {
-            int FirstPointX = Integer.parseInt(parameterList[1]);
-            int FirstPointY = Integer.parseInt(parameterList[2]);
-            int SecondPointX = Integer.parseInt(parameterList[3]);
-            int SecondPointY = Integer.parseInt(parameterList[4]);
-            g.setColor(new Color(Integer.parseInt(parameterList[5])));
-            g.drawLine(FirstPointX, FirstPointY, SecondPointX, SecondPointY);
-        }
-        //redrawing the texts from record
-        else if (parameterList[0].equals("Text")) {
-            String text = parameterList[1];
-            int FirstPointX = Integer.parseInt(parameterList[2]);
-            int FirstPointY = Integer.parseInt(parameterList[3]);
-            g.setColor(new Color(Integer.parseInt(parameterList[4])));
-            //g.setFont(font);
-            g.drawString(text, FirstPointX, FirstPointY);
-        }
-        //redrawing the triangles from record
-        else if (parameterList[0].equals("Tri")) {
-            int FirstPointX = Integer.parseInt(parameterList[1]);
-            int FirstPointY = Integer.parseInt(parameterList[2]);
-            int SecondPointX = Integer.parseInt(parameterList[3]);
-            int SecondPointY = Integer.parseInt(parameterList[4]);
-
-            g.setColor(new Color(Integer.parseInt(parameterList[5])));
-            g.drawLine(FirstPointX, FirstPointY, SecondPointX , SecondPointY);
-            g.drawLine(FirstPointX, SecondPointY, SecondPointX , SecondPointY);
-            g.drawLine(FirstPointX, SecondPointY, FirstPointX, FirstPointY);
-        }
-        //redrawing the circles from record
-        else if (parameterList[0].equals("Circle")) {
-            int X = Integer.parseInt(parameterList[1]);
-            int Y = Integer.parseInt(parameterList[2]);
-            int radius = Integer.parseInt(parameterList[3]);
-
-            g.setColor(new Color(Integer.parseInt(parameterList[4])));
-            g.drawOval(X, Y, radius, radius);
-        }
-        //redrawing the rectangles from record
-        else if (parameterList[0].equals("Rec")) {
-            int X = Integer.parseInt(parameterList[1]);
-            int Y = Integer.parseInt(parameterList[2]);
-            int Height = Integer.parseInt(parameterList[3]);
-            int Width = Integer.parseInt(parameterList[4]);
-
-            g.setColor(new Color(Integer.parseInt(parameterList[5])));
-            g.drawRect(X,Y,Height,Width);
-        }
-        //redrawing the freehands from record
-        else if (parameterList[0].equals("Freehand")) {
-            int FirstPointX = Integer.parseInt(parameterList[1]);
-            int FirstPointY = Integer.parseInt(parameterList[2]);
-            int SecondPointX = Integer.parseInt(parameterList[3]);
-            int SecondPointY = Integer.parseInt(parameterList[4]);
-            g.setColor(new Color(Integer.parseInt(parameterList[5])));
-            g.drawLine(FirstPointX, FirstPointY, SecondPointX, SecondPointY);
-        }
-    }
     public void mouseClicked(MouseEvent e) {
         FirstPoint.setLocation(e.getX(), e.getY());
         g.setColor(color);
         System.out.println("color: " + color);
         switch (DrawMode) {
             case "Text":
+                // Text enter window
                 String text = JOptionPane.showInputDialog("Text input");
                 if (text != null) {
+                    // Set text information to the white board
                     Font font = new Font("Courier", 0, 20);
                     g.setFont(font);
                     g.drawString(text, FirstPoint.x, FirstPoint.y);
@@ -359,6 +298,7 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
                 }
                 break;
             case "Click to Clear":
+                // Clear the white board
                 recordString = "";
                 repaint();
         }
@@ -366,6 +306,7 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
     }
 
     public void mousePressed(MouseEvent e) {
+        // Get x and y coordinate
         FirstPoint.setLocation(0, 0);
         SecondPoint.setLocation(0, 0);
         FirstPoint.setLocation(e.getX(), e.getY());
@@ -375,6 +316,7 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
         SecondPoint.setLocation(e.getX(), e.getY());
         switch (DrawMode) {
             case "Line":
+                // Set line information to the white board
                 g.setColor(color);
                 g.drawLine(FirstPoint.x, FirstPoint.y, SecondPoint.x, SecondPoint.y);
                 history = "Line " + FirstPoint.x + "," + FirstPoint.y + "," + SecondPoint.x + "," + SecondPoint.y;
@@ -382,6 +324,7 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
                 SynPaint.update(history + "," + color.getRGB());
                 break;
             case "Rectangle":
+                // Set rectangle information to the white board
                 g.setColor(color);
                 if (FirstPoint.x < SecondPoint.x && FirstPoint.y > SecondPoint.y) {
                     g.drawRect(FirstPoint.x, SecondPoint.y, Math.abs(FirstPoint.x - SecondPoint.x), Math.abs(FirstPoint.y - SecondPoint.y));
@@ -401,6 +344,7 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
                 break;
 
             case "Triangle":
+                // Set triangle information to the white board
                 g.setColor(color);
                 g.drawLine(FirstPoint.x, FirstPoint.y, SecondPoint.x, SecondPoint.y);
                 g.drawLine(FirstPoint.x, SecondPoint.y, SecondPoint.x, SecondPoint.y);
@@ -410,10 +354,11 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
                 SynPaint.update(history + "," + color.getRGB());
                 break;
             case "Circle":
+                // Set circle information to the white board
                 g.setColor(color);
                 int radius = (int) Math.sqrt(Math.pow(Math.abs(FirstPoint.x - SecondPoint.x), 2) + Math.pow(Math.abs(FirstPoint.y - SecondPoint.y), 2));
-                g.drawOval(Math.min(FirstPoint.x, SecondPoint.x)-radius, Math.min(FirstPoint.y, SecondPoint.y)-radius, (int) radius * 2, (int) radius * 2);
-                history = "Circle " + Math.min(FirstPoint.x, SecondPoint.x) + "," + Math.min(FirstPoint.y, SecondPoint.y) + "," + (int) radius * 2;
+                g.drawOval(Math.min(FirstPoint.x, SecondPoint.x)-radius, Math.min(FirstPoint.y, SecondPoint.y)-radius, radius * 2, radius * 2);
+                history = "Circle " + (Math.min(FirstPoint.x, SecondPoint.x)-radius) + "," + (Math.min(FirstPoint.y, SecondPoint.y)-radius) + "," + radius * 2;
                 recordString += history + "," + color.getRGB() + ";";
                 SynPaint.update(history + "," + color.getRGB());
                 break;
@@ -428,12 +373,12 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
 
     public void mouseDragged(MouseEvent e) {
         g.setColor(color);
+        // Set free hand information to the white board
         if (DrawMode.compareTo("Free Hand") == 0) {
             if (SecondPoint.x != 0 && SecondPoint.y != 0) {
                 FirstPoint.x = SecondPoint.x;
                 FirstPoint.y = SecondPoint.y;
             }
-
             SecondPoint.setLocation(e.getX(), e.getY());
             g.drawLine(FirstPoint.x, FirstPoint.y, SecondPoint.x, SecondPoint.y);
             history = "Line " + FirstPoint.x + "," + FirstPoint.y + "," + SecondPoint.x + "," + SecondPoint.y;
@@ -450,8 +395,10 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
     }
 
     public void windowClosing(WindowEvent e) {
+        // Close window and other users' window
         if(userList.getItemCount() > 1){
-        SynPaint.update("CloseAll");}
+            SynPaint.update("CloseAll");
+        }
         this.dispose();
         System.exit(1);
     }
@@ -473,6 +420,7 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
     }
 
     public void actionPerformed(ActionEvent e) {
+        // Get action status
         DrawMode = e.getActionCommand();
         currentMode.setText(DrawMode);
         FirstPoint.setLocation(0, 0);

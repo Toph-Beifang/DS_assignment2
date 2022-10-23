@@ -25,7 +25,6 @@ public class Join {
     }
 
     public static void main(String[] args) {
-        System.out.println(args.length);
         if (args.length == 3) {
             address = args[0];
             port = Integer.parseInt(args[1]);
@@ -35,7 +34,8 @@ public class Join {
             port = 3030;
             userName = "user";
         }
-        System.out.println(address + port + userName);
+
+        // Create socket and connection
         try {
             socket = new Socket(address, port);
             connection = new Connection(socket);
@@ -53,11 +53,8 @@ public class Join {
 
     private static void run() {
         try {
-            System.out.println("connection name: " + connection);
+            // Send join request to manager
             connection.dataOutputStream.writeUTF("join " + userName);
-            System.out.println("joined");
-
-
         } catch (IOException var1) {
             throw new RuntimeException(var1);
         }

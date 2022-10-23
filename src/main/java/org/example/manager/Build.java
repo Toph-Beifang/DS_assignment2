@@ -38,6 +38,7 @@ public class Build {
         }
 
         EventQueue.invokeLater(() -> {
+            // Create white board
             createNew = new Whiteboard(userName);
         });
         run(port, userName);
@@ -49,6 +50,7 @@ public class Build {
         ServerSocket serverSocket = null;
         Connection connection = null;
 
+        // Create socket
         try {
             serverSocket = new ServerSocket(port);
             Socket client;
