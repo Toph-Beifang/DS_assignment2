@@ -28,6 +28,7 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
     public List chat;
 
     public Whiteboard(String userName) {
+        //setting up the canvas
         color = Color.BLACK;
         colorRecord = color.getRGB();
         drawRecord = new ArrayList();
@@ -35,11 +36,17 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
         setSize(800, 800);
         setVisible(true);
         setTitle(userName + "'s Whiteboard");
+
+        //setting up listeners
         addMouseListener(this);
         addMouseMotionListener(this);
         addWindowListener(this);
+
+        //setting up the command panel
         Panel CommandPanel = new Panel(new GridLayout(0, 5));
         CommandPanel.setBackground(new Color(200, 200, 200));
+
+        //setting up buttons
         Button lineButton = new Button("Line");
         Button rectangleButton = new Button("Rectangle");
         Button triangleButton = new Button("Triangle");
@@ -50,6 +57,8 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
         Button colorButton = new Button("Color");
         Button kickButton = new Button("Kick");
         Button chatButton = new Button("Chat");
+
+        //setting up action commands for buttons
         lineButton.setActionCommand("Line");
         rectangleButton.setActionCommand("Rectangle");
         triangleButton.setActionCommand("Triangle");
@@ -59,6 +68,8 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
         clearButton.setActionCommand("Click to Clear");
         colorButton.setActionCommand("Color");
         chatButton.setActionCommand("Chat");
+
+        //add action listeners to buttons
         lineButton.addActionListener(this);
         rectangleButton.addActionListener(this);
         triangleButton.addActionListener(this);
@@ -75,6 +86,7 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
                 SynPaint.update("Chat " + chatText + "," + userName);
             }
         });
+
         kickButton.addActionListener(e -> {
             String user = userList.getSelectedItem();
             if(user.equals(userName)){
@@ -84,18 +96,22 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
 
             }
         });
+
+        //current drawing mode label
         Label ModeLabel = new Label("Current Mode");
         currentMode = new Label();
         Font f1 = new Font("Arial", 1, 15);
         ModeLabel.setFont(f1);
         currentMode.setFont(f1);
         currentMode.setForeground(new Color(20, 200, 240));
+
         g =  getGraphics();
-        //save current canvas to a record file
+        //record file management system
         JComboBox menu = new JComboBox();
         menu.setModel(new DefaultComboBoxModel(new String[]{"New", "Save to","Save as","Open","Close"}));
         menu.addActionListener((event) -> {
-            //create a new record file
+
+            //create a new record file, either save the current canvas to it or create a empty one
             if (menu.getSelectedItem().equals("New")) {
                 String[] options = {"Create New Record & Save current canvas", "Creat New Empty Record"};
 
@@ -159,6 +175,7 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
                     }
                 }
             }
+
             //choose a file to save to and overwrite it with current canvas's record
             else if (menu.getSelectedItem().equals("Save to")) {
                 //Choosing a file using filechooser
@@ -242,6 +259,7 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
                 }
             }
 
+            //closing a canvas record file
             else if (menu.getSelectedItem().equals("Close")){
                 // Close window
                 System.out.println("amont:" + userList.getItemCount());
@@ -258,6 +276,7 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
         userList.add(userName);
         chat = new List(5);
 
+        //adding the buttons to command panel
         CommandPanel.add(lineButton);
         CommandPanel.add(rectangleButton);
         CommandPanel.add(triangleButton);

@@ -1,0 +1,119 @@
+@startuml
+class org.example.manager.Whiteboard {
++ Graphics g
++ Graphics g2
+~ String DrawMode
+~ Point FirstPoint
+~ Point SecondPoint
+~ Label currentMode
+~ Color color
+~ ArrayList<String> drawRecord
+~ String recordString
+~ String history
+~ int colorRecord
++ List userList
++ List chat
++ void mouseClicked(MouseEvent)
++ void mousePressed(MouseEvent)
++ void mouseReleased(MouseEvent)
++ void mouseEntered(MouseEvent)
++ void mouseExited(MouseEvent)
++ void mouseDragged(MouseEvent)
++ void mouseMoved(MouseEvent)
++ void windowOpened(WindowEvent)
++ void windowClosing(WindowEvent)
++ void windowClosed(WindowEvent)
++ void windowIconified(WindowEvent)
++ void windowDeiconified(WindowEvent)
++ void windowActivated(WindowEvent)
++ void windowDeactivated(WindowEvent)
++ void actionPerformed(ActionEvent)
+}
+class org.example.user.Connection {
+- Socket socket
++ DataInputStream dataInputStream
++ DataOutputStream dataOutputStream
++ Whiteboard whiteboard
++ void start()
+}
+class org.example.manager.Build {
+~ {static} String address
+~ {static} int port
+~ {static} String userName
++ {static} Whiteboard createNew
+- JFrame frame
++ {static} List<Connection> users
++ {static} List<String> usersName
++ {static} void main(String[])
+# {static} void run(int,String)
+}
+class org.example.user.Join {
+~ {static} String address
+~ {static} int port
++ {static} String userName
++ {static} Connection connection
+- {static} Socket socket
++ {static} List<Connection> users
++ {static} List<String> usersName
++ {static} void main(String[])
+- {static} void run()
+}
+class org.example.user.Whiteboard {
++ Graphics g
+~ String DrawMode
+~ Point FirstPoint
+~ Point SecondPoint
+~ Label currentMode
+~ Color color
+~ ArrayList<String> drawRecord
+~ Connection connection
+~ String userName
+~ String history
+~ int colorRecord
++ List chat
++ List userList
++ void mouseClicked(MouseEvent)
++ void mousePressed(MouseEvent)
++ void mouseReleased(MouseEvent)
++ void mouseEntered(MouseEvent)
++ void mouseExited(MouseEvent)
++ void mouseDragged(MouseEvent)
++ void mouseMoved(MouseEvent)
++ void windowOpened(WindowEvent)
++ void windowClosing(WindowEvent)
++ void windowClosed(WindowEvent)
++ void windowIconified(WindowEvent)
++ void windowDeiconified(WindowEvent)
++ void windowActivated(WindowEvent)
++ void windowDeactivated(WindowEvent)
++ void actionPerformed(ActionEvent)
++ Graphics getG()
+}
+class org.example.manager.SynPaint {
++ {static} void syn(Graphics,String[])
++ {static} void update(String)
++ {static} void sendPaint(String)
+}
+class org.example.manager.Connection {
++ Socket socket
++ int port
++ boolean kick
++ DataInputStream dataInputStream
++ DataOutputStream dataOutputStream
++ void start()
+}
+
+
+java.awt.event.MouseListener <|.. org.example.manager.Whiteboard
+java.awt.event.MouseMotionListener <|.. org.example.manager.Whiteboard
+java.awt.event.WindowListener <|.. org.example.manager.Whiteboard
+java.awt.event.ActionListener <|.. org.example.manager.Whiteboard
+org.example.manager.Frame <|-- org.example.manager.Whiteboard
+java.awt.event.MouseListener <|.. org.example.user.Whiteboard
+java.awt.event.MouseMotionListener <|.. org.example.user.Whiteboard
+java.awt.event.WindowListener <|.. org.example.user.Whiteboard
+java.awt.event.ActionListener <|.. org.example.user.Whiteboard
+org.example.user.Frame <|-- org.example.user.Whiteboard
+org.example.manager.Panel <|-- org.example.manager.SynPaint
+org.example.manager.Thread <|-- org.example.manager.Connection
+@enduml
