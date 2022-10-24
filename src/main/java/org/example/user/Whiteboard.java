@@ -159,17 +159,26 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
                 // Set rectangle information to the white board
                 g.setColor(color);
                 if (FirstPoint.x < SecondPoint.x && FirstPoint.y > SecondPoint.y) {
-                    g.drawRect(FirstPoint.x, SecondPoint.y, Math.abs(FirstPoint.x - SecondPoint.x), Math.abs(FirstPoint.y - SecondPoint.y));
-                    history = "Rec " + FirstPoint.x + "," + SecondPoint.y + "," + Math.abs(FirstPoint.x - SecondPoint.x) + "," + Math.abs(FirstPoint.y - SecondPoint.y);
+                    g.drawRect(FirstPoint.x, SecondPoint.y, Math.abs(FirstPoint.x - SecondPoint.x),
+                            Math.abs(FirstPoint.y - SecondPoint.y));
+                    history = "Rec " + FirstPoint.x + "," + SecondPoint.y + "," + Math.abs(FirstPoint.x - SecondPoint.x)
+                            + "," + Math.abs(FirstPoint.y - SecondPoint.y);
                 } else if (FirstPoint.x > SecondPoint.x && FirstPoint.y > SecondPoint.y) {
-                    g.drawRect(SecondPoint.x, SecondPoint.y, Math.abs(FirstPoint.x - SecondPoint.x), Math.abs(FirstPoint.y - SecondPoint.y));
-                    history = "Rec " + SecondPoint.x + "," + SecondPoint.y + "," + Math.abs(FirstPoint.x - SecondPoint.x) + "," + Math.abs(FirstPoint.y - SecondPoint.y);
+                    g.drawRect(SecondPoint.x, SecondPoint.y, Math.abs(FirstPoint.x - SecondPoint.x),
+                            Math.abs(FirstPoint.y - SecondPoint.y));
+                    history = "Rec " + SecondPoint.x + "," + SecondPoint.y + ","
+                            + Math.abs(FirstPoint.x - SecondPoint.x)
+                            + "," + Math.abs(FirstPoint.y - SecondPoint.y);
                 } else if (FirstPoint.x > SecondPoint.x && FirstPoint.y < SecondPoint.y) {
-                    g.drawRect(SecondPoint.x, FirstPoint.y, Math.abs(FirstPoint.x - SecondPoint.x), Math.abs(FirstPoint.y - SecondPoint.y));
-                    history = "Rec " + SecondPoint.x + "," + FirstPoint.y + "," + Math.abs(FirstPoint.x - SecondPoint.x) + "," + Math.abs(FirstPoint.y - SecondPoint.y);
+                    g.drawRect(SecondPoint.x, FirstPoint.y, Math.abs(FirstPoint.x - SecondPoint.x),
+                            Math.abs(FirstPoint.y - SecondPoint.y));
+                    history = "Rec " + SecondPoint.x + "," + FirstPoint.y + "," + Math.abs(FirstPoint.x - SecondPoint.x)
+                            + "," + Math.abs(FirstPoint.y - SecondPoint.y);
                 } else {
-                    g.drawRect(FirstPoint.x, FirstPoint.y, Math.abs(FirstPoint.x - SecondPoint.x), Math.abs(FirstPoint.y - SecondPoint.y));
-                    history = "Rec " + FirstPoint.x + "," + FirstPoint.y + "," + Math.abs(FirstPoint.x - SecondPoint.x) + "," + Math.abs(FirstPoint.y - SecondPoint.y);
+                    g.drawRect(FirstPoint.x, FirstPoint.y, Math.abs(FirstPoint.x - SecondPoint.x),
+                            Math.abs(FirstPoint.y - SecondPoint.y));
+                    history = "Rec " + FirstPoint.x + "," + FirstPoint.y + "," + Math.abs(FirstPoint.x - SecondPoint.x)
+                            + "," + Math.abs(FirstPoint.y - SecondPoint.y);
                 }
                 SynPaint.sendPaint(history + "," + color.getRGB());
                 break;
@@ -185,9 +194,12 @@ public class Whiteboard extends Frame implements MouseListener, MouseMotionListe
             case "Circle":
                 // Set circle information to the white board
                 g.setColor(color);
-                int radius = (int) Math.sqrt(Math.pow(Math.abs(FirstPoint.x - SecondPoint.x), 2) + Math.pow(Math.abs(FirstPoint.y - SecondPoint.y), 2));
-                g.drawOval(Math.min(FirstPoint.x, SecondPoint.x)-radius, Math.min(FirstPoint.y, SecondPoint.y)-radius, radius * 2, radius * 2);
-                history = "Circle " + (Math.min(FirstPoint.x, SecondPoint.x)-radius) + "," + (Math.min(FirstPoint.y, SecondPoint.y)-radius) + "," + radius * 2;
+                int radius = (int) Math.sqrt(Math.pow(Math.abs(FirstPoint.x - SecondPoint.x), 2) +
+                        Math.pow(Math.abs(FirstPoint.y - SecondPoint.y), 2));
+                g.drawOval(Math.min(FirstPoint.x, SecondPoint.x)-radius,
+                        Math.min(FirstPoint.y, SecondPoint.y)-radius, radius * 2, radius * 2);
+                history = "Circle " + (Math.min(FirstPoint.x, SecondPoint.x)-radius) + "," +
+                        (Math.min(FirstPoint.y, SecondPoint.y)-radius) + "," + radius * 2;
                 SynPaint.sendPaint(history + "," + color.getRGB());
                 break;
         }

@@ -95,7 +95,9 @@ public class Connection {
                             SynPaint.syn(whiteboard.getG(), paintLine);
                         }
                     }
-                    else if (historyArray[0].equals("Text") || historyArray[0].equals("Line") ||historyArray[0].equals("Rec") ||historyArray[0].equals("Tri")||historyArray[0].equals("Circle"))
+                    else if (historyArray[0].equals("Text") || historyArray[0].equals("Line")
+                            ||historyArray[0].equals("Rec") ||historyArray[0].equals("Tri")
+                            ||historyArray[0].equals("Circle"))
                     {
                         // Handle real time draw
                         SynPaint.syn(whiteboard.getG(), historyArray);

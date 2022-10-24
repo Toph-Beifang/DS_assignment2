@@ -36,7 +36,8 @@ public class Connection extends Thread {
                     String[] msg = inputMsg.split(" ");
                     if (msg[0].equals("join")) { // Handle join request
                         if (!Build.usersName.contains(msg[1])) { // If the username is unique
-                            int joinConfirm = JOptionPane.showConfirmDialog(null, msg[1] + " is trying to join your whiteboard");
+                            int joinConfirm = JOptionPane.showConfirmDialog(null,
+                                    msg[1] + " is trying to join your whiteboard");
                             // Gain owner's confirmation
                             if(joinConfirm == 0){ // Agree the join request
                                 Build.usersName.add(msg[1]);
@@ -85,7 +86,8 @@ public class Connection extends Thread {
                     } else if(msg[0].equals("Chat")){ // Handle live chat information
                         String[] chat = msg[1].split(",");
                         Build.createNew.chat.add(chat[1] + ": " + chat[0]);
-                    }else if (msg[0].equals("Text") || msg[0].equals("Line") ||msg[0].equals("Rec") ||msg[0].equals("Tri")||msg[0].equals("Circle")) {
+                    }else if (msg[0].equals("Text") || msg[0].equals("Line") ||msg[0].equals("Rec")
+                            ||msg[0].equals("Tri")||msg[0].equals("Circle")) {
                         // Handle draw functions
                         if (Build.createNew.userList.getItemCount() > 1) {
                             SynPaint.syn(Build.createNew.g, msg);

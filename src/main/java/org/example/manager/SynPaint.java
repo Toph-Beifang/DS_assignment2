@@ -26,7 +26,8 @@ public class SynPaint extends Panel {
             String[] recordArray = record.split(",");
             // Set line color
             g.setColor(new Color(Integer.parseInt(recordArray[4])));
-            g.drawLine(Integer.parseInt(recordArray[0]), Integer.parseInt(recordArray[1]), Integer.parseInt(recordArray[2]), Integer.parseInt(recordArray[3]));
+            g.drawLine(Integer.parseInt(recordArray[0]), Integer.parseInt(recordArray[1]),
+                    Integer.parseInt(recordArray[2]), Integer.parseInt(recordArray[3]));
         }
         else if (historyArray[0].equals("Rec")) {
             // Handle draw rectangle
@@ -34,7 +35,8 @@ public class SynPaint extends Panel {
             String[] recordArray = record.split(",");
             // Set rectangle color
             g.setColor(new Color(Integer.parseInt(recordArray[4])));
-            g.drawRect(Integer.parseInt(recordArray[0]), Integer.parseInt(recordArray[1]), Integer.parseInt(recordArray[2]), Integer.parseInt(recordArray[3]));
+            g.drawRect(Integer.parseInt(recordArray[0]), Integer.parseInt(recordArray[1]),
+                    Integer.parseInt(recordArray[2]), Integer.parseInt(recordArray[3]));
         }
         else if (historyArray[0].equals("Tri")) {
             // Handle draw triangle
@@ -42,16 +44,20 @@ public class SynPaint extends Panel {
             String[] recordArray = record.split(",");
             // Set triangle color
             g.setColor(new Color(Integer.parseInt(recordArray[4])));
-            g.drawLine(Integer.parseInt(recordArray[0]), Integer.parseInt(recordArray[1]), Integer.parseInt(recordArray[2]), Integer.parseInt(recordArray[3]));
-            g.drawLine(Integer.parseInt(recordArray[0]), Integer.parseInt(recordArray[3]), Integer.parseInt(recordArray[2]), Integer.parseInt(recordArray[3]));
-            g.drawLine(Integer.parseInt(recordArray[0]), Integer.parseInt(recordArray[3]), Integer.parseInt(recordArray[0]), Integer.parseInt(recordArray[1]));
+            g.drawLine(Integer.parseInt(recordArray[0]), Integer.parseInt(recordArray[1]),
+                    Integer.parseInt(recordArray[2]), Integer.parseInt(recordArray[3]));
+            g.drawLine(Integer.parseInt(recordArray[0]), Integer.parseInt(recordArray[3]),
+                    Integer.parseInt(recordArray[2]), Integer.parseInt(recordArray[3]));
+            g.drawLine(Integer.parseInt(recordArray[0]), Integer.parseInt(recordArray[3]),
+                    Integer.parseInt(recordArray[0]), Integer.parseInt(recordArray[1]));
         } else if (historyArray[0].equals("Circle")) {
             // Handle draw circle
             String record = historyArray[1];
             String[] recordArray = record.split(",");
             // Set circle color
             g.setColor(new Color(Integer.parseInt(recordArray[3])));
-            g.drawOval(Integer.parseInt(recordArray[0]), Integer.parseInt(recordArray[1]), Integer.parseInt(recordArray[2]), Integer.parseInt(recordArray[2]));
+            g.drawOval(Integer.parseInt(recordArray[0]), Integer.parseInt(recordArray[1]),
+                    Integer.parseInt(recordArray[2]), Integer.parseInt(recordArray[2]));
         }
     }
 
